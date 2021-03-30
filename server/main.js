@@ -18,7 +18,7 @@ Meteor.startup(() => {
       currTime.split(":")[1],
     ];
     const currRoom = value.RoomId;
-    const currTemp = value.temperature;
+    const currTemp = parseFloat(value.temperature);
     if (
       TempCollection.find({
         room: currRoom,
