@@ -1,0 +1,46 @@
+{
+    "date": "2013-12-03",
+    "hours": [
+        {
+            "hour": 5,
+            "minutes": [
+                {
+                    "min": 0,
+                    "details": [
+                        {
+                            "room": 1,
+                            "temp": 20.1
+                        },
+                        {
+                            "room": 2,
+                            "temp": 30.7
+                        }
+                    ]
+                },
+                {
+                    "min": 15,
+                    "details": [
+                        {
+                            "room": 5,
+                            "temp": 23.4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "hour": 6,
+            "minutes": [
+                {
+                    "min": 45,
+                    "details": [
+                        {
+                            "room": 6,
+                            "temp": 21.4
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
