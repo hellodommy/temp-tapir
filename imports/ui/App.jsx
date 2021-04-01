@@ -28,26 +28,28 @@ function filterData(startTime, endTime, data) {
     const currDoc = data[i];
     const currRoom = currDoc.room;
     const currData = currDoc.data;
+    const currDate = currDoc.date;
+    console.log(currDate);
     for (let j = 0; j < currData.length; j++) { // for each hour under the room
       const currHourBlock = currData[j];
-      const currHour = parseInt(currHourBlock.hour);
+      const currHour = currHourBlock.hour;
       if (currHour >= startHour && currHour <= endHour) {
         const currDetails = currHourBlock.details;
         for (let k = 0; k < currDetails.length; k++) { // for each minute under the hour
           const currMinBlock = currDetails[k];
-          const currMin = parseInt(currMinBlock.min);
+          const currMin = currMinBlock.min;
           if (currMin >= startMin && currMin <= endMin) {
-            if (currRoom === "0") {
+            if (currRoom === 0) {
               r0y.push(currMinBlock.temp);
-            } else if (currRoom === "1") {
+            } else if (currRoom === 1) {
               r1y.push(currMinBlock.temp);
-            } else if (currRoom === "2") {
+            } else if (currRoom === 2) {
               r2y.push(currMinBlock.temp);
-            } else if (currRoom === "3") {
+            } else if (currRoom === 3) {
               r3y.push(currMinBlock.temp);
-            } else if (currRoom === "4") {
+            } else if (currRoom === 4) {
               r4y.push(currMinBlock.temp);
-            } else if (currRoom === "6") {
+            } else if (currRoom === 6) {
               r6y.push(currMinBlock.temp);
             }
             x.push(currHour.toString() + ":" + currMin.toString());

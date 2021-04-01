@@ -14,10 +14,10 @@ Meteor.startup(() => {
       timestamp.split("T")[1],
     ];
     const [currHour, currMin] = [
-      currTime.split(":")[0],
-      currTime.split(":")[1],
+      parseInt(currTime.split(":")[0]),
+      parseInt(currTime.split(":")[1]),
     ];
-    const currRoom = value.RoomId;
+    const currRoom = parseInt(value.RoomId);
     const currTemp = parseFloat(value.temperature);
     if (
       TempCollection.find({
