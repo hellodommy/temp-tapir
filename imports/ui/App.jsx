@@ -6,16 +6,30 @@ import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
 import { TimeSeries } from "./TimeSeries";
 import { TempCollection } from '../db/TempCollection';
+import getDates from "../api/getDates";
 
-function filterData(startTime, endTime, data) {
-  const [startHour, startMin] = [
-    parseInt(startTime.split(":")[0]),
-    parseInt(startTime.split(":")[1]),
-  ];
-  const [endHour, endMin] = [
-    parseInt(endTime.split(":")[0]),
-    parseInt(endTime.split(":")[1]),
-  ];
+function formatTime(hour, min) {
+  /**
+   * Formats time in HH:MM from int inputs
+   */
+  let hourStr = hour.toString();
+  let minStr = min.toString();
+  if (hourStr.length < 2) hourStr = "0" + hourStr;
+  if (minStr.length < 2) minStr = "0" + minStr;
+  return `${hourStr}:${minStr}`;
+}
+
+function isInRange(startDate, startTime, endDate, endTime, currDate, currTime) {
+  /**
+   * Checks if a given timeframe is within range
+   */
+  const start = new Date(`${startDate}T${startTime}`);
+  const end = new Date(`${endDate}T${endTime}`);
+  const curr = new Date(`${currDate}T${currTime}`);
+  return (curr >= start) && (curr <= end);
+}
+
+function filterData(startDate, startTime, endDate, endTime, data) {
   let r0y = [];
   let r1y = [];
   let r2y = [];
@@ -23,22 +37,26 @@ function filterData(startTime, endTime, data) {
   let r4y = [];
   let r6y = [];
 
-  let x = [];
-  for (let i = 0; i < data.length; i++) { // each document (room)
-    const currDoc = data[i];
-    const currRoom = currDoc.room;
-    const currData = currDoc.data;
-    const currDate = currDoc.date;
-    console.log(currDate);
-    for (let j = 0; j < currData.length; j++) { // for each hour under the room
-      const currHourBlock = currData[j];
-      const currHour = currHourBlock.hour;
-      if (currHour >= startHour && currHour <= endHour) {
+  let x = new Set();
+
+  // Should only contain data within our date range
+  for (let day = 0; day < data.length; day++) { // for each day
+    const currDay = data[day];
+    for (let i = 0; i < currDay.length; i++) { // for each room
+      const currDoc = currDay[i];
+      const currRoom = currDoc.room;
+      const currData = currDoc.data;
+      const currDate = currDoc.date;
+      for (let j = 0; j < currData.length; j++) {
+        // for each hour under the room
+        const currHourBlock = currData[j];
+        const currHour = currHourBlock.hour;
         const currDetails = currHourBlock.details;
-        for (let k = 0; k < currDetails.length; k++) { // for each minute under the hour
+        for (let k = 0; k < currDetails.length; k++) {
           const currMinBlock = currDetails[k];
           const currMin = currMinBlock.min;
-          if (currMin >= startMin && currMin <= endMin) {
+          const currTime = formatTime(currHour, currMin);
+          if (isInRange(startDate, startTime, endDate, endTime, currDate, currTime)) {
             if (currRoom === 0) {
               r0y.push(currMinBlock.temp);
             } else if (currRoom === 1) {
@@ -52,12 +70,13 @@ function filterData(startTime, endTime, data) {
             } else if (currRoom === 6) {
               r6y.push(currMinBlock.temp);
             }
-            x.push(currHour.toString() + ":" + currMin.toString());
+            x.add(currDate + "T" + currTime);
           }
         }
       }
     }
   }
+  x = Array.from(x);
   return [r0y, r1y, r2y, r3y, r4y, r6y, x];
 }
 
@@ -68,15 +87,19 @@ export const App = () => {
   const [endTime, setEndTime] = useState("15:30");
   const [sampleSize, setSampleSize] = useState(25);
 
+  const dateRange = getDates(new Date(startDate), new Date(endDate));
   const { temps } = useTracker(() => {
-    const temps = TempCollection.find(
-      {date: startDate}
-    ).fetch();
-    
+    let temps = [];
+    for (let i = 0; i < dateRange.length; i++) {
+      const cuurrTemp = TempCollection.find(
+        {date: dateRange[i]}
+      ).fetch();
+      temps.push(cuurrTemp)
+    }
     return { temps };
-  })
+  });
 
-  const dataset = filterData(startTime, endTime, temps);
+  const dataset = filterData(startDate, startTime, endDate, endTime, temps);
 
   return (
     <div>
