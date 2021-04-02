@@ -8,38 +8,9 @@ import Plot from "react-plotly.js";
 import { TimeSeries } from "./TimeSeries";
 import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
+import * as ts from "../api/handleTimestamp";
 
-function formatTime(hour, min) {
-  /**
-   * Formats time in HH:MM from int inputs
-   */
-  let hourStr = hour.toString();
-  let minStr = min.toString();
-  if (hourStr.length < 2) hourStr = "0" + hourStr;
-  if (minStr.length < 2) minStr = "0" + minStr;
-  return `${hourStr}:${minStr}`;
-}
-
-function isInRange(startDate, startTime, endDate, endTime, currDate, currTime) {
-  /**
-   * Checks if a given timeframe is within range
-   */
-  const start = new Date(`${startDate}T${startTime}`);
-  const end = new Date(`${endDate}T${endTime}`);
-  const curr = new Date(`${currDate}T${currTime}`);
-  return (curr >= start) && (curr <= end);
-}
-
-function separateDateTime(str) {
-  /**
-   * Gets date and time from the format "2013-10-02 08:08:08.0157" given by plotly
-   */
-
-  const date = str.split(' ')[0];
-  const time = str.split(' ')[1].slice(0, 5)
-  return [date, time];
-}
-
+// TODO: handle seconds for smoother panning
 function filterData(startDate, startTime, endDate, endTime, data) {
   let r0y = [];
   let r1y = [];
@@ -66,8 +37,8 @@ function filterData(startDate, startTime, endDate, endTime, data) {
         for (let k = 0; k < currDetails.length; k++) {
           const currMinBlock = currDetails[k];
           const currMin = currMinBlock.min;
-          const currTime = formatTime(currHour, currMin);
-          if (isInRange(startDate, startTime, endDate, endTime, currDate, currTime)) {
+          const currTime = ts.formatTime(currHour, currMin);
+          if (ts.isInRange(startDate, startTime, endDate, endTime, currDate, currTime)) {
             if (currRoom === 0) {
               r0y.push(currMinBlock.temp);
             } else if (currRoom === 1) {
@@ -115,8 +86,8 @@ export const App = () => {
   const handleResize = (e) => {
     let xStart = e['xaxis.range[0]'];
     let xEnd = e["xaxis.range[1]"];
-    xStart = separateDateTime(xStart);
-    xEnd = separateDateTime(xEnd);
+    xStart = ts.separateDateTime(xStart);
+    xEnd = ts.separateDateTime(xEnd);
     setStartDate(xStart[0]);
     setStartTime(xStart[1]);
     setEndDate(xEnd[0]);
@@ -135,7 +106,7 @@ export const App = () => {
               id="startDate"
               label="Start Date"
               type="date"
-              defaultValue={startDate}
+              value={startDate}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -149,7 +120,7 @@ export const App = () => {
               id="startTime"
               label="Start Time"
               type="time"
-              defaultValue={startTime}
+              value={startTime}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -166,7 +137,7 @@ export const App = () => {
               id="endDate"
               label="End Date"
               type="date"
-              defaultValue={endDate}
+              value={endDate}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -180,7 +151,7 @@ export const App = () => {
               id="endTime"
               label="End Time"
               type="time"
-              defaultValue={endTime}
+              value={endTime}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -253,7 +224,12 @@ export const App = () => {
                 marker: { color: "#db57b2" },
               },
             ]}
-            layout={{ width: "100%", height: 500, title: "Time Series" }}
+            layout={{
+              width: "100%",
+              height: 500,
+              title: "Temperature",
+              yaxis: { range: [5, 30], fixedrange: true },
+            }}
           />
         </Grid>
       </Grid>
