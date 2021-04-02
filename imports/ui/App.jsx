@@ -4,6 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
+import Plot from "react-plotly.js";
 import { TimeSeries } from "./TimeSeries";
 import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
@@ -27,6 +28,16 @@ function isInRange(startDate, startTime, endDate, endTime, currDate, currTime) {
   const end = new Date(`${endDate}T${endTime}`);
   const curr = new Date(`${currDate}T${currTime}`);
   return (curr >= start) && (curr <= end);
+}
+
+function separateDateTime(str) {
+  /**
+   * Gets date and time from the format "2013-10-02 08:08:08.0157" given by plotly
+   */
+
+  const date = str.split(' ')[0];
+  const time = str.split(' ')[1].slice(0, 5)
+  return [date, time];
 }
 
 function filterData(startDate, startTime, endDate, endTime, data) {
@@ -100,6 +111,17 @@ export const App = () => {
   });
 
   const dataset = filterData(startDate, startTime, endDate, endTime, temps);
+
+  const handleResize = (e) => {
+    let xStart = e['xaxis.range[0]'];
+    let xEnd = e["xaxis.range[1]"];
+    xStart = separateDateTime(xStart);
+    xEnd = separateDateTime(xEnd);
+    setStartDate(xStart[0]);
+    setStartTime(xStart[1]);
+    setEndDate(xEnd[0]);
+    setEndTime(xEnd[1]);
+  };
 
   return (
     <div>
@@ -185,14 +207,53 @@ export const App = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <TimeSeries
-            r0y={dataset[0]}
-            r1y={dataset[1]}
-            r2y={dataset[2]}
-            r3y={dataset[3]}
-            r4y={dataset[4]}
-            r6y={dataset[5]}
-            x={dataset[6]}
+          <Plot
+            onRelayout={handleResize}
+            data={[
+              {
+                name: "Room 0",
+                x: dataset[6],
+                y: dataset[0],
+                type: "scatter",
+                marker: { color: "#db5f57" },
+              },
+              {
+                name: "Room 1",
+                x: dataset[6],
+                y: dataset[1],
+                type: "scatter",
+                marker: { color: "#dbc257" },
+              },
+              {
+                name: "Room 2",
+                x: dataset[6],
+                y: dataset[2],
+                type: "scatter",
+                marker: { color: "#91db57" },
+              },
+              {
+                name: "Room 3",
+                x: dataset[6],
+                y: dataset[3],
+                type: "scatter",
+                marker: { color: "#57d3db" },
+              },
+              {
+                name: "Room 4",
+                x: dataset[6],
+                y: dataset[4],
+                type: "scatter",
+                marker: { color: "#5770db" },
+              },
+              {
+                name: "Room 6",
+                x: dataset[6],
+                y: dataset[5],
+                type: "scatter",
+                marker: { color: "#db57b2" },
+              },
+            ]}
+            layout={{ width: "100%", height: 500, title: "Time Series" }}
           />
         </Grid>
       </Grid>

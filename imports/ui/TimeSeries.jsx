@@ -1,22 +1,13 @@
 import React from "react";
 import Plot from "react-plotly.js";
 
+// TODO: Find out how to pass event handler stuff up
+// then can use this as a separate component
 export function TimeSeries(props) {
-
-  /*
-  let r1x = [];
-  let r1y = [];
-
-  for (let i = 0; i < props.data.length; i++) {
-    const currData = props.data[i];
-    if (currData.room === '1') {
-      console.log(currData);
-    }
-  }
-  */
 
   return (
     <Plot
+      onRelayout={(e) => console.log(e)}
       data={[
         {
           name: "Room 0",
