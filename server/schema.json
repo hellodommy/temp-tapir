@@ -1,0 +1,86 @@
+{
+	"title": "Temperature Dashboard Schema",
+	"description": "Schema of the temperature dashboard.",
+	"type": "object",
+	"default": {},
+	"required": ["_id", "room", "date", "data"],
+	"properties": {
+		"_id": {
+			"$id": "#id",
+			"type": "string",
+			"title": "The _id schema",
+			"description": "Assigned dynamically to uniquely identify the document",
+			"examples": ["f2CwtHn6qhbLXJdx7"]
+		},
+		"room": {
+			"$id": "#room",
+			"type": "integer",
+			"title": "The room schema",
+			"description": "Room number of the record it belongs to",
+			"examples": [6]
+		},
+		"date": {
+			"$id": "#checked",
+			"type": "string",
+			"pattern": "((?:19|20)\\d\\d)-(0?[1-9]|1[012])-([12][0-9]|3[01]|0?[1-9])",
+			"title": "The date schema",
+			"description": "Date of record in the format yyyy-mm-dd",
+			"examples": ["2013-10-21"]
+		},
+		"data": {
+			"$id": "#data",
+			"type": "array",
+			"title": "The data schema",
+			"description": "Contains more information organised by hour.",
+			"default": [],
+			"items": {
+				"type": "object",
+				"required": ["hour", "details"],
+				"properties": {
+					"hour": {
+						"$id": "#hour",
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 23,
+						"title": "The hour schema",
+						"description": "Hour of record in 24-hour format",
+						"examples": [13]
+					},
+					"details": {
+						"$id": "#details",
+						"type": "array",
+						"title": "The details schema",
+						"description": "Details of record, containing minutes and temperature",
+						"default": [],
+						"items": {
+							"type": "object",
+							"required": ["min", "temp"],
+							"properties": {
+								"min": {
+									"$id": "#min",
+									"type": "integer",
+									"minimum": 0,
+									"maximum": 45,
+									"multipleOf": 15,
+									"title": "The minute schema",
+									"description": "Minute of record in 15-minute intervals",
+									"examples": [30]									
+								},
+								"temp": {
+									"$id": "#temp",
+									"type": "number",
+									"title": "The temperature schema",
+									"description": "Temperature of record",
+									"examples": [15.473]												
+								}
+							},
+							"additionalProperties": false
+						}
+					}
+				},
+				"additionalProperties": false
+			}
+		}
+	},
+	"additionalProperties": false
+}
