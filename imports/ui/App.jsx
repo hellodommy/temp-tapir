@@ -5,11 +5,11 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
 import Plot from "react-plotly.js";
-import { LTOB } from "downsample";
 import { TimeSeries } from "./TimeSeries";
 import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
 import * as ts from "../api/handleTimestamp";
+import * as samp from "../api/sample";
 
 // TODO: handle seconds for smoother panning
 function filterData(startDate, startTime, endDate, endTime, data) {
@@ -49,6 +49,8 @@ function filterData(startDate, startTime, endDate, endTime, data) {
               dp2.push([date, currMinBlock.temp]);
             } else if (currRoom === 3) {
               dp3.push([date, currMinBlock.temp]);
+            } else if (currRoom === 5) {
+              dp5.push([date, currMinBlock.temp]);
             } else if (currRoom === 4) {
               dp4.push([date, currMinBlock.temp]);
             } else if (currRoom === 6) {
@@ -59,38 +61,7 @@ function filterData(startDate, startTime, endDate, endTime, data) {
       }
     }
   }
-  return [dp0, dp1, dp2, dp3, dp4, dp6];
-}
-
-function calculateSampleSize(scale) {
-  /**
-   * Calculates the sample size based on power of 2
-   */
-  return Math.pow(2, scale);
-}
-
-function getSampleSizeString(scale) {
-  /**
-   * Expresses sample size in string format for user
-   */
-  return `2^${scale} = ${calculateSampleSize(scale)} samples`;
-}
-
-function downsample(datapoints, scale) {
-  /**
-   * Adjusts sample to the appropriate sample size
-   */
-  const sampleSize = calculateSampleSize(scale);
-  let x = [];
-  let y = [];
-  
-  const downsampled = LTOB(datapoints, sampleSize);
-  for (let i = 0; i < downsampled.length; i++) {
-    const curr = downsampled[i];
-    x.push(curr[0]);
-    y.push(curr[1]);
-  }
-  return [x, y];
+  return [dp0, dp1, dp2, dp3, dp4, dp5, dp6];
 }
 
 export const App = () => {
@@ -123,12 +94,13 @@ export const App = () => {
 
   const dataset = filterData(startDate, startTime, endDate, endTime, temps);
 
-  const [x0, y0] = downsample(dataset[0], sampleSizeScale);
-  const [x1, y1] = downsample(dataset[1], sampleSizeScale);
-  const [x2, y2] = downsample(dataset[2], sampleSizeScale);
-  const [x3, y3] = downsample(dataset[3], sampleSizeScale);
-  const [x4, y4] = downsample(dataset[4], sampleSizeScale);
-  const [x6, y6] = downsample(dataset[5], sampleSizeScale);
+  const [x0, y0] = samp.downsample(dataset[0], sampleSizeScale);
+  const [x1, y1] = samp.downsample(dataset[1], sampleSizeScale);
+  const [x2, y2] = samp.downsample(dataset[2], sampleSizeScale);
+  const [x3, y3] = samp.downsample(dataset[3], sampleSizeScale);
+  const [x4, y4] = samp.downsample(dataset[4], sampleSizeScale);
+  const [x5, y5] = samp.downsample(dataset[5], sampleSizeScale);
+  const [x6, y6] = samp.downsample(dataset[6], sampleSizeScale);
 
   return (
     <div>
@@ -213,7 +185,7 @@ export const App = () => {
             onChange={(e, v) => setSampleSizeScale(v)}
           />
           <Typography variant="body2" gutterBottom>
-            {getSampleSizeString(sampleSizeScale)}
+            {samp.getSampleSizeString(sampleSizeScale)}
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -254,6 +226,13 @@ export const App = () => {
                 y: y4,
                 type: "scatter",
                 marker: { color: "#5770db" },
+              },
+              {
+                name: "Room 5",
+                x: x5,
+                y: y5,
+                type: "scatter",
+                marker: { color: "#a157db" },
               },
               {
                 name: "Room 6",
