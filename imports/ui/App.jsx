@@ -5,6 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
 import Plot from "react-plotly.js";
+import { LTOB } from "downsample";
 import { TimeSeries } from "./TimeSeries";
 import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
@@ -12,14 +13,13 @@ import * as ts from "../api/handleTimestamp";
 
 // TODO: handle seconds for smoother panning
 function filterData(startDate, startTime, endDate, endTime, data) {
-  let r0y = [];
-  let r1y = [];
-  let r2y = [];
-  let r3y = [];
-  let r4y = [];
-  let r6y = [];
-
-  let x = new Set();
+  let dp0 = [];
+  let dp1 = [];
+  let dp2 = [];
+  let dp3 = [];
+  let dp4 = [];
+  let dp5 = [];
+  let dp6 = [];
 
   // Should only contain data within our date range
   for (let day = 0; day < data.length; day++) { // for each day
@@ -39,27 +39,58 @@ function filterData(startDate, startTime, endDate, endTime, data) {
           const currMin = currMinBlock.min;
           const currTime = ts.formatTime(currHour, currMin);
           if (ts.isInRange(startDate, startTime, endDate, endTime, currDate, currTime)) {
+            const datestring = currDate + "T" + currTime;
+            const date = new Date(datestring);
             if (currRoom === 0) {
-              r0y.push(currMinBlock.temp);
+              dp0.push([date, currMinBlock.temp]);
             } else if (currRoom === 1) {
-              r1y.push(currMinBlock.temp);
+              dp1.push([date, currMinBlock.temp]);
             } else if (currRoom === 2) {
-              r2y.push(currMinBlock.temp);
+              dp2.push([date, currMinBlock.temp]);
             } else if (currRoom === 3) {
-              r3y.push(currMinBlock.temp);
+              dp3.push([date, currMinBlock.temp]);
             } else if (currRoom === 4) {
-              r4y.push(currMinBlock.temp);
+              dp4.push([date, currMinBlock.temp]);
             } else if (currRoom === 6) {
-              r6y.push(currMinBlock.temp);
+              dp6.push([date, currMinBlock.temp]);
             }
-            x.add(currDate + "T" + currTime);
           }
         }
       }
     }
   }
-  x = Array.from(x);
-  return [r0y, r1y, r2y, r3y, r4y, r6y, x];
+  return [dp0, dp1, dp2, dp3, dp4, dp6];
+}
+
+function calculateSampleSize(scale) {
+  /**
+   * Calculates the sample size based on power of 2
+   */
+  return Math.pow(2, scale);
+}
+
+function getSampleSizeString(scale) {
+  /**
+   * Expresses sample size in string format for user
+   */
+  return `2^${scale} = ${calculateSampleSize(scale)} samples`;
+}
+
+function downsample(datapoints, scale) {
+  /**
+   * Adjusts sample to the appropriate sample size
+   */
+  const sampleSize = calculateSampleSize(scale);
+  let x = [];
+  let y = [];
+  
+  const downsampled = LTOB(datapoints, sampleSize);
+  for (let i = 0; i < downsampled.length; i++) {
+    const curr = downsampled[i];
+    x.push(curr[0]);
+    y.push(curr[1]);
+  }
+  return [x, y];
 }
 
 export const App = () => {
@@ -67,24 +98,20 @@ export const App = () => {
   const [startTime, setStartTime] = useState("05:00");
   const [endDate, setEndDate] = useState("2013-10-02");
   const [endTime, setEndTime] = useState("15:30");
-  const [sampleSize, setSampleSize] = useState(25);
+  const [sampleSizeScale, setSampleSizeScale] = useState(5);
 
   const dateRange = getDates(new Date(startDate), new Date(endDate));
   const { temps } = useTracker(() => {
     let temps = [];
     for (let i = 0; i < dateRange.length; i++) {
-      const cuurrTemp = TempCollection.find(
-        {date: dateRange[i]}
-      ).fetch();
-      temps.push(cuurrTemp)
+      const cuurrTemp = TempCollection.find({ date: dateRange[i] }).fetch();
+      temps.push(cuurrTemp);
     }
     return { temps };
   });
 
-  const dataset = filterData(startDate, startTime, endDate, endTime, temps);
-
   const handleResize = (e) => {
-    let xStart = e['xaxis.range[0]'];
+    let xStart = e["xaxis.range[0]"];
     let xEnd = e["xaxis.range[1]"];
     xStart = ts.separateDateTime(xStart);
     xEnd = ts.separateDateTime(xEnd);
@@ -93,6 +120,15 @@ export const App = () => {
     setEndDate(xEnd[0]);
     setEndTime(xEnd[1]);
   };
+
+  const dataset = filterData(startDate, startTime, endDate, endTime, temps);
+
+  const [x0, y0] = downsample(dataset[0], sampleSizeScale);
+  const [x1, y1] = downsample(dataset[1], sampleSizeScale);
+  const [x2, y2] = downsample(dataset[2], sampleSizeScale);
+  const [x3, y3] = downsample(dataset[3], sampleSizeScale);
+  const [x4, y4] = downsample(dataset[4], sampleSizeScale);
+  const [x6, y6] = downsample(dataset[5], sampleSizeScale);
 
   return (
     <div>
@@ -167,15 +203,18 @@ export const App = () => {
             Sample size
           </Typography>
           <Slider
-            defaultValue={sampleSize}
+            defaultValue={sampleSizeScale}
             aria-labelledby="discrete-slider-small-steps"
             step={1}
             marks
             min={1}
-            max={50}
+            max={9}
             valueLabelDisplay="auto"
-            onChange={(e, v) => setSampleSize(v)}
+            onChange={(e, v) => setSampleSizeScale(v)}
           />
+          <Typography variant="body2" gutterBottom>
+            {getSampleSizeString(sampleSizeScale)}
+          </Typography>
         </Grid>
         <Grid item xs={12}>
           <Plot
@@ -183,43 +222,43 @@ export const App = () => {
             data={[
               {
                 name: "Room 0",
-                x: dataset[6],
-                y: dataset[0],
+                x: x0,
+                y: y0,
                 type: "scatter",
                 marker: { color: "#db5f57" },
               },
               {
                 name: "Room 1",
-                x: dataset[6],
-                y: dataset[1],
+                x: x1,
+                y: y1,
                 type: "scatter",
                 marker: { color: "#dbc257" },
               },
               {
                 name: "Room 2",
-                x: dataset[6],
-                y: dataset[2],
+                x: x2,
+                y: y2,
                 type: "scatter",
                 marker: { color: "#91db57" },
               },
               {
                 name: "Room 3",
-                x: dataset[6],
-                y: dataset[3],
+                x: x3,
+                y: y3,
                 type: "scatter",
                 marker: { color: "#57d3db" },
               },
               {
                 name: "Room 4",
-                x: dataset[6],
-                y: dataset[4],
+                x: x4,
+                y: y4,
                 type: "scatter",
                 marker: { color: "#5770db" },
               },
               {
                 name: "Room 6",
-                x: dataset[6],
-                y: dataset[5],
+                x: x6,
+                y: y6,
                 type: "scatter",
                 marker: { color: "#db57b2" },
               },

@@ -8,4 +8,5 @@
 
 - Inputs and slider: [Material UI](https://material-ui.com/)
 - Time series: [plotly for React](https://plotly.com/javascript/react/)
-- Colour palette: [Seaborn (HLS)](https://seaborn.pydata.org/tutorial/color_palettes.html)
+- Colour palette: [Seaborn (HLS)](https://seaborn.pydata.org/tutorial/color_palettes.html\
+- Adjusting sample size of data: [janjakubnanista/downsample](https://github.com/janjakubnanista/downsample)
