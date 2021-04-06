@@ -4,65 +4,11 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
-import Plot from "react-plotly.js";
 import TimeSeries from "./TimeSeries";
 import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
 import * as ts from "../api/handleTimestamp";
 import * as samp from "../api/sample";
-
-// TODO: handle seconds for smoother panning
-function filterData(startDate, startTime, endDate, endTime, data) {
-  let dp0 = [];
-  let dp1 = [];
-  let dp2 = [];
-  let dp3 = [];
-  let dp4 = [];
-  let dp5 = [];
-  let dp6 = [];
-
-  // Should only contain data within our date range
-  for (let day = 0; day < data.length; day++) { // for each day
-    const currDay = data[day];
-    for (let i = 0; i < currDay.length; i++) { // for each room
-      const currDoc = currDay[i];
-      const currRoom = currDoc.room;
-      const currData = currDoc.data;
-      const currDate = currDoc.date;
-      for (let j = 0; j < currData.length; j++) {
-        // for each hour under the room
-        const currHourBlock = currData[j];
-        const currHour = currHourBlock.hour;
-        const currDetails = currHourBlock.details;
-        for (let k = 0; k < currDetails.length; k++) {
-          const currMinBlock = currDetails[k];
-          const currMin = currMinBlock.min;
-          const currTime = ts.formatTime(currHour, currMin);
-          if (ts.isInRange(startDate, startTime, endDate, endTime, currDate, currTime)) {
-            const datestring = currDate + "T" + currTime;
-            const date = new Date(datestring);
-            if (currRoom === 0) {
-              dp0.push([date, currMinBlock.temp]);
-            } else if (currRoom === 1) {
-              dp1.push([date, currMinBlock.temp]);
-            } else if (currRoom === 2) {
-              dp2.push([date, currMinBlock.temp]);
-            } else if (currRoom === 3) {
-              dp3.push([date, currMinBlock.temp]);
-            } else if (currRoom === 5) {
-              dp5.push([date, currMinBlock.temp]);
-            } else if (currRoom === 4) {
-              dp4.push([date, currMinBlock.temp]);
-            } else if (currRoom === 6) {
-              dp6.push([date, currMinBlock.temp]);
-            }
-          }
-        }
-      }
-    }
-  }
-  return [dp0, dp1, dp2, dp3, dp4, dp5, dp6];
-}
 
 export const App = () => {
   const [startDate, setStartDate] = useState("2013-10-02");
@@ -72,7 +18,11 @@ export const App = () => {
   const [sampleSizeScale, setSampleSizeScale] = useState(5);
 
   const dateRange = getDates(new Date(startDate), new Date(endDate));
+  
   const { temps } = useTracker(() => {
+    /**
+     * Retrieves documents for a given date range
+     */
     let temps = [];
     for (let i = 0; i < dateRange.length; i++) {
       const cuurrTemp = TempCollection.find({ date: dateRange[i] }).fetch();
@@ -82,13 +32,16 @@ export const App = () => {
   });
 
   const handleResize = (timeframe) => {
+    /**
+     * Adjusts timeframe when user pans on graph
+     */
     setStartDate(timeframe[0][0]);
     setStartTime(timeframe[0][1]);
     setEndDate(timeframe[1][0]);
     setEndTime(timeframe[1][1]);
   };
 
-  const dataset = filterData(startDate, startTime, endDate, endTime, temps);
+  const dataset = ts.filterData(startDate, startTime, endDate, endTime, temps);
 
   const r0 = samp.downsample(dataset[0], sampleSizeScale);
   const r1 = samp.downsample(dataset[1], sampleSizeScale);
@@ -199,4 +152,4 @@ export const App = () => {
       </Grid>
     </div>
   );
-}; 
+};
