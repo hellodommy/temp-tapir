@@ -5,7 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
 import Plot from "react-plotly.js";
-import { TimeSeries } from "./TimeSeries";
+import TimeSeries from "./TimeSeries";
 import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
 import * as ts from "../api/handleTimestamp";
@@ -81,26 +81,22 @@ export const App = () => {
     return { temps };
   });
 
-  const handleResize = (e) => {
-    let xStart = e["xaxis.range[0]"];
-    let xEnd = e["xaxis.range[1]"];
-    xStart = ts.separateDateTime(xStart);
-    xEnd = ts.separateDateTime(xEnd);
-    setStartDate(xStart[0]);
-    setStartTime(xStart[1]);
-    setEndDate(xEnd[0]);
-    setEndTime(xEnd[1]);
+  const handleResize = (timeframe) => {
+    setStartDate(timeframe[0][0]);
+    setStartTime(timeframe[0][1]);
+    setEndDate(timeframe[1][0]);
+    setEndTime(timeframe[1][1]);
   };
 
   const dataset = filterData(startDate, startTime, endDate, endTime, temps);
 
-  const [x0, y0] = samp.downsample(dataset[0], sampleSizeScale);
-  const [x1, y1] = samp.downsample(dataset[1], sampleSizeScale);
-  const [x2, y2] = samp.downsample(dataset[2], sampleSizeScale);
-  const [x3, y3] = samp.downsample(dataset[3], sampleSizeScale);
-  const [x4, y4] = samp.downsample(dataset[4], sampleSizeScale);
-  const [x5, y5] = samp.downsample(dataset[5], sampleSizeScale);
-  const [x6, y6] = samp.downsample(dataset[6], sampleSizeScale);
+  const r0 = samp.downsample(dataset[0], sampleSizeScale);
+  const r1 = samp.downsample(dataset[1], sampleSizeScale);
+  const r2 = samp.downsample(dataset[2], sampleSizeScale);
+  const r3 = samp.downsample(dataset[3], sampleSizeScale);
+  const r4 = samp.downsample(dataset[4], sampleSizeScale);
+  const r5 = samp.downsample(dataset[5], sampleSizeScale);
+  const r6 = samp.downsample(dataset[6], sampleSizeScale);
 
   return (
     <div>
@@ -189,65 +185,15 @@ export const App = () => {
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <Plot
-            onRelayout={handleResize}
-            data={[
-              {
-                name: "Room 0",
-                x: x0,
-                y: y0,
-                type: "scatter",
-                marker: { color: "#db5f57" },
-              },
-              {
-                name: "Room 1",
-                x: x1,
-                y: y1,
-                type: "scatter",
-                marker: { color: "#dbc257" },
-              },
-              {
-                name: "Room 2",
-                x: x2,
-                y: y2,
-                type: "scatter",
-                marker: { color: "#91db57" },
-              },
-              {
-                name: "Room 3",
-                x: x3,
-                y: y3,
-                type: "scatter",
-                marker: { color: "#57d3db" },
-              },
-              {
-                name: "Room 4",
-                x: x4,
-                y: y4,
-                type: "scatter",
-                marker: { color: "#5770db" },
-              },
-              {
-                name: "Room 5",
-                x: x5,
-                y: y5,
-                type: "scatter",
-                marker: { color: "#a157db" },
-              },
-              {
-                name: "Room 6",
-                x: x6,
-                y: y6,
-                type: "scatter",
-                marker: { color: "#db57b2" },
-              },
-            ]}
-            layout={{
-              width: "100%",
-              height: 500,
-              title: "Temperature",
-              yaxis: { range: [5, 30], fixedrange: true },
-            }}
+          <TimeSeries
+            onTimeframeChange={handleResize}
+            r0={r0}
+            r1={r1}
+            r2={r2}
+            r3={r3}
+            r4={r4}
+            r5={r5}
+            r6={r6}
           />
         </Grid>
       </Grid>
