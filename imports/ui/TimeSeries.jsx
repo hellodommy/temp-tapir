@@ -31,6 +31,13 @@ class TimeSeries extends React.Component {
     const y5 = this.props.r5[1];
     const x6 = this.props.r6[0];
     const y6 = this.props.r6[1];
+    const r0visible = this.props.visibility[0];
+    const r1visible = this.props.visibility[1];
+    const r2visible = this.props.visibility[2];
+    const r3visible = this.props.visibility[3];
+    const r4visible = this.props.visibility[4];
+    const r5visible = this.props.visibility[5];
+    const r6visible = this.props.visibility[6];
 
     return (
       <Plot
@@ -42,6 +49,7 @@ class TimeSeries extends React.Component {
             y: y0,
             type: "scatter",
             marker: { color: "#db5f57" },
+            visible: r0visible,
           },
           {
             name: "Room 1",
@@ -49,6 +57,7 @@ class TimeSeries extends React.Component {
             y: y1,
             type: "scatter",
             marker: { color: "#dbc257" },
+            visible: r1visible,
           },
           {
             name: "Room 2",
@@ -56,6 +65,7 @@ class TimeSeries extends React.Component {
             y: y2,
             type: "scatter",
             marker: { color: "#91db57" },
+            visible: r2visible,
           },
           {
             name: "Room 3",
@@ -63,6 +73,7 @@ class TimeSeries extends React.Component {
             y: y3,
             type: "scatter",
             marker: { color: "#57d3db" },
+            visible: r3visible,
           },
           {
             name: "Room 4",
@@ -70,6 +81,7 @@ class TimeSeries extends React.Component {
             y: y4,
             type: "scatter",
             marker: { color: "#5770db" },
+            visible: r4visible,
           },
           {
             name: "Room 5",
@@ -77,6 +89,7 @@ class TimeSeries extends React.Component {
             y: y5,
             type: "scatter",
             marker: { color: "#a157db" },
+            visible: r5visible,
           },
           {
             name: "Room 6",
@@ -84,13 +97,12 @@ class TimeSeries extends React.Component {
             y: y6,
             type: "scatter",
             marker: { color: "#db57b2" },
+            visible: r6visible,
           },
         ]}
         layout={{
-          width: "100%",
-          height: 500,
           title: "Temperature",
-          yaxis: { range: [5, 30], fixedrange: true },
+          yaxis: { range: [8, 28], fixedrange: true },
         }}
       />
     );

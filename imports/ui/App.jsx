@@ -17,6 +17,13 @@ export const App = () => {
   const [endDate, setEndDate] = useState("2013-10-02");
   const [endTime, setEndTime] = useState("15:30");
   const [sampleSizeScale, setSampleSizeScale] = useState(5);
+  const [isr0visible, setr0visible] = useState(true);
+  const [isr1visible, setr1visible] = useState(true);
+  const [isr2visible, setr2visible] = useState(true);
+  const [isr3visible, setr3visible] = useState(true);
+  const [isr4visible, setr4visible] = useState(true);
+  const [isr5visible, setr5visible] = useState(true);
+  const [isr6visible, setr6visible] = useState(true);
 
   const dateRange = getDates(new Date(startDate), new Date(endDate));
   
@@ -41,6 +48,32 @@ export const App = () => {
     setEndDate(timeframe[1][0]);
     setEndTime(timeframe[1][1]);
   };
+
+  const handleRoomClick = (room) => {
+    switch (room) {
+      case 0:
+        setr0visible(!isr0visible);
+        break;
+      case 1:
+        setr1visible(!isr1visible);
+        break;
+      case 2:
+        setr2visible(!isr2visible);
+        break;
+      case 3:
+        setr3visible(!isr3visible);
+        break;
+      case 4:
+        setr4visible(!isr4visible);
+        break;
+      case 5:
+        setr5visible(!isr5visible);
+        break;
+      case 6:
+        setr6visible(!isr6visible);
+        break;
+    }
+  }
 
   const dataset = ts.filterData(startDate, startTime, endDate, endTime, temps);
 
@@ -158,10 +191,31 @@ export const App = () => {
             r4={r4}
             r5={r5}
             r6={r6}
+            visibility={[
+              isr0visible,
+              isr1visible,
+              isr2visible,
+              isr3visible,
+              isr4visible,
+              isr5visible,
+              isr6visible,
+            ]}
           />
         </Grid>
         <Grid item xs={12}>
-          <Floorplan avgTemps={avgTemps} />
+          <Floorplan
+            onRoomClick={handleRoomClick}
+            avgTemps={avgTemps}
+            visibility={[
+              isr0visible,
+              isr1visible,
+              isr2visible,
+              isr3visible,
+              isr4visible,
+              isr5visible,
+              isr6visible,
+            ]}
+          />
         </Grid>
       </Grid>
     </div>

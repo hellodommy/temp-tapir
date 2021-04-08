@@ -4,25 +4,33 @@ import * as fp from '../api/floorplan';
 class Floorplan extends React.Component {
   constructor(props) {
     super(props);
+		this.handleClick = this.handleClick.bind(this);
   }
+
+	handleClick(e, room) {
+		this.props.onRoomClick(room);
+	}
 
   render() {
 		
 		const avgTemps = this.props.avgTemps;
 		const sortedTemps = fp.sortTemps(avgTemps);
 		const assignedColour = fp.assignColour(sortedTemps);
-		console.log(assignedColour);
+		const r0visible = this.props.visibility[0] ? 0.5 : 0;
+		const r1visible = this.props.visibility[1] ? 0.5 : 0;
+		const r2visible = this.props.visibility[2] ? 0.5 : 0;
+		const r3visible = this.props.visibility[3] ? 0.5 : 0;
+		const r4visible = this.props.visibility[4] ? 0.5 : 0;
+		const r5visible = this.props.visibility[5] ? 0.5 : 0;
+		const r6visible = this.props.visibility[6] ? 0.5 : 0;
+
     return (
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          verticalAlign: "middle",
-          margin: 0,
-          overflow: "hidden",
-        }}
-      >
-        <svg viewBox="0 0 1280 720" preserveAspectRatio="xMinYMin meet">
+      <div>
+        <svg
+          style={{ maxWidth: 720 }}
+          viewBox="0 0 1280 720"
+          preserveAspectRatio="xMinYMin meet"
+        >
           <image
             width="1280"
             height="720"
@@ -35,7 +43,9 @@ class Floorplan extends React.Component {
             width="340"
             height="250"
             fill={assignedColour["r0avg"]}
-            fillOpacity=".5"
+            fillOpacity={r0visible}
+            style={{ cursor: "pointer" }}
+            onClick={(e) => this.handleClick(e, 0)}
           />
           <rect
             id="r1"
@@ -44,7 +54,9 @@ class Floorplan extends React.Component {
             width="140"
             height="220"
             fill={assignedColour["r1avg"]}
-            fillOpacity=".5"
+            fillOpacity={r1visible}
+            style={{ cursor: "pointer" }}
+            onClick={(e) => this.handleClick(e, 1)}
           />
           <rect
             id="r2"
@@ -53,7 +65,9 @@ class Floorplan extends React.Component {
             width="140"
             height="220"
             fill={assignedColour["r2avg"]}
-            fillOpacity=".5"
+            fillOpacity={r2visible}
+            style={{ cursor: "pointer" }}
+            onClick={(e) => this.handleClick(e, 2)}
           />
           <rect
             id="r3"
@@ -62,7 +76,9 @@ class Floorplan extends React.Component {
             width="140"
             height="220"
             fill={assignedColour["r3avg"]}
-            fillOpacity=".5"
+            fillOpacity={r3visible}
+            style={{ cursor: "pointer" }}
+            onClick={(e) => this.handleClick(e, 3)}
           />
           <rect
             id="r4"
@@ -71,7 +87,9 @@ class Floorplan extends React.Component {
             width="140"
             height="220"
             fill={assignedColour["r4avg"]}
-            fillOpacity=".5"
+            fillOpacity={r4visible}
+            style={{ cursor: "pointer" }}
+            onClick={(e) => this.handleClick(e, 4)}
           />
           <rect
             id="r5"
@@ -80,7 +98,9 @@ class Floorplan extends React.Component {
             width="140"
             height="220"
             fill={assignedColour["r5avg"]}
-            fillOpacity=".5"
+            fillOpacity={r5visible}
+            style={{ cursor: "pointer" }}
+            onClick={(e) => this.handleClick(e, 5)}
           />
           <rect
             id="r6"
@@ -89,7 +109,9 @@ class Floorplan extends React.Component {
             width="140"
             height="220"
             fill={assignedColour["r6avg"]}
-            fillOpacity=".5"
+            fillOpacity={r6visible}
+            style={{ cursor: "pointer" }}
+            onClick={(e) => this.handleClick(e, 6)}
           />
         </svg>
       </div>
