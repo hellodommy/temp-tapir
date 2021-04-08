@@ -9,6 +9,7 @@ import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
 import * as ts from "../api/handleTimestamp";
 import * as samp from "../api/sample";
+import Floorplan from "./Floorplan";
 
 export const App = () => {
   const [startDate, setStartDate] = useState("2013-10-02");
@@ -148,6 +149,9 @@ export const App = () => {
             r5={r5}
             r6={r6}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <Floorplan />
         </Grid>
       </Grid>
     </div>
