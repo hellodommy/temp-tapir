@@ -1,4 +1,5 @@
 import React from "react";
+import * as fp from '../api/floorplan';
 
 class Floorplan extends React.Component {
   constructor(props) {
@@ -7,6 +8,10 @@ class Floorplan extends React.Component {
 
   render() {
 		
+		const avgTemps = this.props.avgTemps;
+		const sortedTemps = fp.sortTemps(avgTemps);
+		const assignedColour = fp.assignColour(sortedTemps);
+		console.log(assignedColour);
     return (
       <div
         style={{
@@ -29,7 +34,7 @@ class Floorplan extends React.Component {
             y="65"
             width="340"
             height="250"
-            fill="#FFAFAF"
+            fill={assignedColour["r0avg"]}
             fillOpacity=".5"
           />
           <rect
@@ -38,7 +43,7 @@ class Floorplan extends React.Component {
             y="470"
             width="140"
             height="220"
-            fill="#FFAFAF"
+            fill={assignedColour["r1avg"]}
             fillOpacity=".5"
           />
           <rect
@@ -47,7 +52,7 @@ class Floorplan extends React.Component {
             y="470"
             width="140"
             height="220"
-            fill="#228B22"
+            fill={assignedColour["r2avg"]}
             fillOpacity=".5"
           />
           <rect
@@ -56,7 +61,7 @@ class Floorplan extends React.Component {
             y="470"
             width="140"
             height="220"
-            fill="#ffafaf"
+            fill={assignedColour["r3avg"]}
             fillOpacity=".5"
           />
           <rect
@@ -65,7 +70,7 @@ class Floorplan extends React.Component {
             y="470"
             width="140"
             height="220"
-            fill="#228B22"
+            fill={assignedColour["r4avg"]}
             fillOpacity=".5"
           />
           <rect
@@ -74,7 +79,7 @@ class Floorplan extends React.Component {
             y="470"
             width="140"
             height="220"
-            fill="#ffafaf"
+            fill={assignedColour["r5avg"]}
             fillOpacity=".5"
           />
           <rect
@@ -83,7 +88,7 @@ class Floorplan extends React.Component {
             y="470"
             width="140"
             height="220"
-            fill="#228B22"
+            fill={assignedColour["r6avg"]}
             fillOpacity=".5"
           />
         </svg>

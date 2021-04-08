@@ -30,3 +30,14 @@ export function downsample(datapoints, scale) {
   }
   return [x, y];
 }
+
+export function getAvg(tempArray) {
+  /**
+   * Gets the average temperature of the room
+   */
+  let sum = 0;
+  for (let i = 0; i < tempArray.length; i++) {
+    sum += tempArray[i];
+  }
+  return sum / tempArray.length;
+}

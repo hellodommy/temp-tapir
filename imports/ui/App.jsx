@@ -52,6 +52,16 @@ export const App = () => {
   const r5 = samp.downsample(dataset[5], sampleSizeScale);
   const r6 = samp.downsample(dataset[6], sampleSizeScale);
 
+  let avgTemps = {
+    r0avg: samp.getAvg(r0[1]),
+    r1avg: samp.getAvg(r1[1]),
+    r2avg: samp.getAvg(r2[1]),
+    r3avg: samp.getAvg(r3[1]),
+    r4avg: samp.getAvg(r4[1]),
+    r5avg: samp.getAvg(r5[1]),
+    r6avg: samp.getAvg(r6[1])
+  }
+
   return (
     <div>
       <Typography variant="h4" gutterBottom>
@@ -151,7 +161,7 @@ export const App = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Floorplan />
+          <Floorplan avgTemps={avgTemps} />
         </Grid>
       </Grid>
     </div>
