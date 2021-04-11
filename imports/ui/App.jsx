@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
-import TimeSeries from "./TimeSeries";
 import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
 import * as ts from "../api/handleTimestamp";
 import * as samp from "../api/sample";
-import Floorplan from "./Floorplan";
+
+const Floorplan = React.lazy(() => import("./Floorplan"));
+const TimeSeries = React.lazy(() => import("./TimeSeries"));
 
 export const App = () => {
   const [startDate, setStartDate] = useState("2013-10-02");
@@ -191,40 +192,44 @@ export const App = () => {
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <TimeSeries
-            onTimeframeChange={handleResize}
-            r0={r0}
-            r1={r1}
-            r2={r2}
-            r3={r3}
-            r4={r4}
-            r5={r5}
-            r6={r6}
-            visibility={[
-              isr0visible,
-              isr1visible,
-              isr2visible,
-              isr3visible,
-              isr4visible,
-              isr5visible,
-              isr6visible,
-            ]}
-          />
+          <Suspense fallback={<div style={{height: 450, width: 700}}>Loading time series...</div>}>
+            <TimeSeries
+              onTimeframeChange={handleResize}
+              r0={r0}
+              r1={r1}
+              r2={r2}
+              r3={r3}
+              r4={r4}
+              r5={r5}
+              r6={r6}
+              visibility={[
+                isr0visible,
+                isr1visible,
+                isr2visible,
+                isr3visible,
+                isr4visible,
+                isr5visible,
+                isr6visible,
+              ]}
+            />
+          </Suspense>
         </Grid>
         <Grid item xs={12}>
-          <Floorplan
-            onRoomClick={handleRoomClick}
-            avgTemps={avgTemps}
-            visibility={[
-              isr0visible,
-              isr1visible,
-              isr2visible,
-              isr3visible,
-              isr4visible,
-              isr5visible,
-              isr6visible,
-            ]}
-          />
+          <Suspense fallback={<div style={{width: 1280, height: 720}}>Loading floor plan...</div>}>
+            <Floorplan
+              onRoomClick={handleRoomClick}
+              avgTemps={avgTemps}
+              visibility={[
+                isr0visible,
+                isr1visible,
+                isr2visible,
+                isr3visible,
+                isr4visible,
+                isr5visible,
+                isr6visible,
+              ]}
+            />
+          </Suspense>
         </Grid>
       </Grid>
     </div>

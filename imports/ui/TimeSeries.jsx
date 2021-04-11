@@ -101,6 +101,8 @@ class TimeSeries extends React.Component {
           },
         ]}
         layout={{
+          width: 700,
+          height: 450,
           title: "Temperature",
           yaxis: { range: [8, 28], fixedrange: true },
         }}

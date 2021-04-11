@@ -14,7 +14,6 @@ class Floorplan extends React.Component {
   render() {
 		
 		const avgTemps = this.props.avgTemps;
-    console.log(avgTemps);
 		const assignedColour = assignColour(avgTemps);
 		const r0visible = this.props.visibility[0] ? 0.5 : 0;
 		const r1visible = this.props.visibility[1] ? 0.5 : 0;
