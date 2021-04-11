@@ -1,5 +1,5 @@
 import React from "react";
-import * as fp from '../api/floorplan';
+import assignColour from "../api/floorplan";
 
 class Floorplan extends React.Component {
   constructor(props) {
@@ -14,8 +14,8 @@ class Floorplan extends React.Component {
   render() {
 		
 		const avgTemps = this.props.avgTemps;
-		const sortedTemps = fp.sortTemps(avgTemps);
-		const assignedColour = fp.assignColour(sortedTemps);
+    console.log(avgTemps);
+		const assignedColour = assignColour(avgTemps);
 		const r0visible = this.props.visibility[0] ? 0.5 : 0;
 		const r1visible = this.props.visibility[1] ? 0.5 : 0;
 		const r2visible = this.props.visibility[2] ? 0.5 : 0;
