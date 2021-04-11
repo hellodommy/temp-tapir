@@ -1,5 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { TempCollection } from "../imports/db/TempCollection";
+import '../imports/api/tempPublications';
+
 import Papa from "papaparse";
 
 Meteor.startup(() => {

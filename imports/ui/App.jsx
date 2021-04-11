@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -27,10 +28,18 @@ export const App = () => {
 
   const dateRange = getDates(new Date(startDate), new Date(endDate));
   
-  const { temps } = useTracker(() => {
+  const { temps, isLoading } = useTracker(() => {
     /**
      * Retrieves documents for a given date range
      */
+    const noDataAvailable = { temps: [] };
+
+    const handler = Meteor.subscribe("temps");
+
+    if (!handler.ready()) {
+      return { ...noDataAvailable, isLoading: true };
+    }
+
     let temps = [];
     for (let i = 0; i < dateRange.length; i++) {
       const cuurrTemp = TempCollection.find({ date: dateRange[i] }).fetch();
