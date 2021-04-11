@@ -1,4 +1,5 @@
 import React, { useState, Suspense } from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import Typography from "@material-ui/core/Typography";
@@ -13,11 +14,36 @@ import * as samp from "../api/sample";
 const Floorplan = React.lazy(() => import("./Floorplan"));
 const TimeSeries = React.lazy(() => import("./TimeSeries"));
 
-export const App = () => {
-  const [startDate, setStartDate] = useState("2013-10-02");
-  const [startTime, setStartTime] = useState("05:00");
-  const [endDate, setEndDate] = useState("2013-10-02");
-  const [endTime, setEndTime] = useState("15:30");
+function getParams(location, field) {
+  const searchParams = new URLSearchParams(location.search);
+  return searchParams.get(field) || "";
+}
+
+function hasParams(location, field) {
+  const searchParams = new URLSearchParams(location.search);
+  return searchParams.has(field);
+}
+
+function setParams(name, value) {
+  const searchParams = new URLSearchParams();
+  searchParams.set(name, value);
+  return searchParams.toString();
+}
+
+const MainPage = (props) => {
+  const { location } = props;
+  const [startDate, setStartDate] = hasParams(location, "startDate")
+    ? useState(getParams(location, "startDate"))
+    : useState("2013-10-02");
+  const [startTime, setStartTime] = hasParams(location, "startTime")
+    ? useState(ts.addColon(getParams(location, "startTime")))
+    : useState("05:00");
+  const [endDate, setEndDate] = hasParams(location, "endDate")
+    ? useState(getParams(location, "endDate"))
+    : useState("2013-10-05");
+  const [endTime, setEndTime] = hasParams(location, "endTime")
+    ? useState(ts.addColon(getParams(location, "endTime")))
+    : useState("15:30");
   const [sampleSizeScale, setSampleSizeScale] = useState(5);
   const [isr0visible, setr0visible] = useState(true);
   const [isr1visible, setr1visible] = useState(true);
@@ -54,9 +80,14 @@ export const App = () => {
      * Adjusts timeframe when user pans on graph
      */
     setStartDate(timeframe[0][0]);
+    const sdUrl = setParams("startDate", timeframe[0][0]);
     setStartTime(timeframe[0][1]);
+    const stUrl = setParams("startTime", ts.removeColon(timeframe[0][1]));
     setEndDate(timeframe[1][0]);
+    const edUrl = setParams("endDate", timeframe[1][0]);
     setEndTime(timeframe[1][1]);
+    const etUrl = setParams("endTime", ts.removeColon(timeframe[1][1]));
+    props.history.push(`?${sdUrl}&${stUrl}&${edUrl}&${etUrl}`);
   };
 
   const handleRoomClick = (room) => {
@@ -83,7 +114,7 @@ export const App = () => {
         setr6visible(!isr6visible);
         break;
     }
-  }
+  };
 
   const dataset = ts.filterData(startDate, startTime, endDate, endTime, temps);
 
@@ -233,5 +264,13 @@ export const App = () => {
         </Grid>
       </Grid>
     </div>
+  );
+};
+
+export const App = () => {
+  return (
+    <Router>
+      <Route path="/" component={MainPage} />
+    </Router>
   );
 };

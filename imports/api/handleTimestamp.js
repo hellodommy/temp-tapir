@@ -19,6 +19,14 @@ function isInRange(startDate, startTime, endDate, endTime, currDate, currTime) {
   return curr >= start && curr <= end;
 }
 
+export function removeColon(str) {
+  return str.replace(":", "");
+}
+
+export function addColon(str) {
+  return str.slice(0, 2) + ":" + str.slice(2, 4);
+}
+
 export function separateDateTime(str) {
   /**
    * Gets date and time from the format "2013-10-02 08:08:08.0157" given by plotly
