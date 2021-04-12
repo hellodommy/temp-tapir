@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
@@ -14,6 +14,32 @@ import * as link from "../api/linkability";
 
 const Floorplan = React.lazy(() => import("./Floorplan"));
 const TimeSeries = React.lazy(() => import("./TimeSeries"));
+
+function useWindowSize() {
+  // Initialize state with undefined width/height so server and client renders match
+  // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
+  const [windowSize, setWindowSize] = useState({
+    width: undefined,
+    height: undefined,
+  });
+  useEffect(() => {
+    // Handler to call on window resize
+    function handleResize() {
+      // Set window width/height to state
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+    // Call handler right away so state gets updated with initial window size
+    handleResize();
+    // Remove event listener on cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty array ensures that effect is only run on mount
+  return windowSize;
+}
 
 const MainPage = (props) => {
   const { location } = props;
@@ -224,155 +250,155 @@ const MainPage = (props) => {
     r5avg: samp.getAvg(r5[1]),
     r6avg: samp.getAvg(r6[1])
   }
-return (
-  <div>
-    <Typography variant="h4" gutterBottom>
-      Temperature Tapir 🦡
-    </Typography>
-    <Grid container spacing={3}>
-      <Grid item xs={6} sm={3}>
-        <form noValidate>
-          <TextField
-            id="startDate"
-            label="Start Date"
-            type="date"
-            value={startDate}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={(e) =>
-              handleInputChange("startDate", e.target.value)
+
+  const size = useWindowSize();
+  const width = size["width"];
+  const calcWidth = 0.9*width;
+  const calcHeight = calcWidth / 3 * 2;
+
+  return (
+    <div>
+      <Typography variant="h4" gutterBottom>
+        Temperature Tapir 🦡
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={6} sm={3}>
+          <form noValidate>
+            <TextField
+              id="startDate"
+              label="Start Date"
+              type="date"
+              value={startDate}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              onChange={(e) => handleInputChange("startDate", e.target.value)}
+            />
+          </form>
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <form noValidate>
+            <TextField
+              id="startTime"
+              label="Start Time"
+              type="time"
+              value={startTime}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              inputProps={{
+                step: 300, // 5 min
+              }}
+              onChange={(e) => handleInputChange("startTime", e.target.value)}
+            />
+          </form>
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <form noValidate>
+            <TextField
+              id="endDate"
+              label="End Date"
+              type="date"
+              value={endDate}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              onChange={(e) => handleInputChange("endDate", e.target.value)}
+            />
+          </form>
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <form noValidate>
+            <TextField
+              id="endTime"
+              label="End Time"
+              type="time"
+              value={endTime}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              inputProps={{
+                step: 300, // 5 min
+              }}
+              onChange={(e) => handleInputChange("endTime", e.target.value)}
+            />
+          </form>
+        </Grid>
+        <Grid item xs={6}>
+          <Typography variant="body2" gutterBottom>
+            Sample size
+          </Typography>
+          <Slider
+            defaultValue={sampleSizeScale}
+            aria-labelledby="discrete-slider-small-steps"
+            step={1}
+            marks
+            min={1}
+            max={9}
+            valueLabelDisplay="auto"
+            onChange={(e, v) => handleInputChange("sampleSizeScale", v)}
+          />
+          <Typography variant="body2" gutterBottom>
+            {samp.getSampleSizeString(sampleSizeScale)}
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Suspense
+            fallback={
+              <div style={{ height: calcHeight, width: calcWidth }}>
+                Loading time series...
+              </div>
             }
-          />
-        </form>
-      </Grid>
-      <Grid item xs={6} sm={3}>
-        <form noValidate>
-          <TextField
-            id="startTime"
-            label="Start Time"
-            type="time"
-            value={startTime}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 300, // 5 min
-            }}
-            onChange={(e) =>
-              handleInputChange("startTime", e.target.value)
+          >
+            <TimeSeries
+              onTimeframeChange={handleResize}
+              r0={r0}
+              r1={r1}
+              r2={r2}
+              r3={r3}
+              r4={r4}
+              r5={r5}
+              r6={r6}
+              visibility={[
+                isr0visible,
+                isr1visible,
+                isr2visible,
+                isr3visible,
+                isr4visible,
+                isr5visible,
+                isr6visible,
+              ]}
+              dim={[calcHeight, calcWidth]}
+            />
+          </Suspense>
+        </Grid>
+        <Grid item xs={12}>
+          <Suspense
+            fallback={
+              <div style={{ width: calcWidth, height: calcHeight }}>
+                Loading floor plan...
+              </div>
             }
-          />
-        </form>
+          >
+            <Floorplan
+              onRoomClick={handleRoomClick}
+              avgTemps={avgTemps}
+              visibility={[
+                isr0visible,
+                isr1visible,
+                isr2visible,
+                isr3visible,
+                isr4visible,
+                isr5visible,
+                isr6visible,
+              ]}
+              dim={[calcHeight, calcWidth]}
+            />
+          </Suspense>
+        </Grid>
       </Grid>
-      <Grid item xs={6} sm={3}>
-        <form noValidate>
-          <TextField
-            id="endDate"
-            label="End Date"
-            type="date"
-            value={endDate}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={(e) =>
-              handleInputChange("endDate", e.target.value)
-            }
-          />
-        </form>
-      </Grid>
-      <Grid item xs={6} sm={3}>
-        <form noValidate>
-          <TextField
-            id="endTime"
-            label="End Time"
-            type="time"
-            value={endTime}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 300, // 5 min
-            }}
-            onChange={(e) =>
-              handleInputChange("endTime", e.target.value)
-            }
-          />
-        </form>
-      </Grid>
-      <Grid item xs={6}>
-        <Typography variant="body2" gutterBottom>
-          Sample size
-        </Typography>
-        <Slider
-          defaultValue={sampleSizeScale}
-          aria-labelledby="discrete-slider-small-steps"
-          step={1}
-          marks
-          min={1}
-          max={9}
-          valueLabelDisplay="auto"
-          onChange={(e, v) => handleInputChange("sampleSizeScale", v)}
-        />
-        <Typography variant="body2" gutterBottom>
-          {samp.getSampleSizeString(sampleSizeScale)}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Suspense
-          fallback={
-            <div style={{ height: 450, width: 700 }}>
-              Loading time series...
-            </div>
-          }
-        >
-          <TimeSeries
-            onTimeframeChange={handleResize}
-            r0={r0}
-            r1={r1}
-            r2={r2}
-            r3={r3}
-            r4={r4}
-            r5={r5}
-            r6={r6}
-            visibility={[
-              isr0visible,
-              isr1visible,
-              isr2visible,
-              isr3visible,
-              isr4visible,
-              isr5visible,
-              isr6visible,
-            ]}
-          />
-        </Suspense>
-      </Grid>
-      <Grid item xs={12}>
-        <Suspense
-          fallback={
-            <div style={{ width: 1280, height: 720 }}>
-              Loading floor plan...
-            </div>
-          }
-        >
-          <Floorplan
-            onRoomClick={handleRoomClick}
-            avgTemps={avgTemps}
-            visibility={[
-              isr0visible,
-              isr1visible,
-              isr2visible,
-              isr3visible,
-              isr4visible,
-              isr5visible,
-              isr6visible,
-            ]}
-          />
-        </Suspense>
-      </Grid>
-    </Grid>
-  </div>
-);
+    </div>
+  );
 };
 
 export const App = () => {

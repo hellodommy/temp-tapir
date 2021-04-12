@@ -38,7 +38,8 @@ class TimeSeries extends React.Component {
     const r4visible = this.props.visibility[4];
     const r5visible = this.props.visibility[5];
     const r6visible = this.props.visibility[6];
-
+    const calcHeight = this.props.dim[0];
+    const calcWidth = this.props.dim[1];
     return (
       <Plot
         onRelayout={this.handleResize}
@@ -101,8 +102,9 @@ class TimeSeries extends React.Component {
           },
         ]}
         layout={{
-          width: 700,
-          height: 450,
+          width: calcWidth,
+          height: calcHeight * 2,
+          autosize: false,
           title: "Temperature",
           yaxis: { range: [8, 28], fixedrange: true },
         }}

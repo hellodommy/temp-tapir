@@ -12,7 +12,6 @@ class Floorplan extends React.Component {
 	}
 
   render() {
-		
 		const avgTemps = this.props.avgTemps;
 		const assignedColour = assignColour(avgTemps);
 		const r0visible = this.props.visibility[0] ? 0.5 : 0;
@@ -23,10 +22,12 @@ class Floorplan extends React.Component {
 		const r5visible = this.props.visibility[5] ? 0.5 : 0;
 		const r6visible = this.props.visibility[6] ? 0.5 : 0;
 
+    const calcWidth = this.props.dim[1];
+
     return (
       <div>
         <svg
-          style={{ maxWidth: 720 }}
+          style={{ maxWidth: calcWidth }}
           viewBox="0 0 1280 720"
           preserveAspectRatio="xMinYMin meet"
         >

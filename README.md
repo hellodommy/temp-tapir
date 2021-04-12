@@ -6,6 +6,7 @@
 - Using images with SVG shapes: [Responsive SVG Image Overlays - Jess Damerst](https://dev.to/damjess/responsive-svg-image-overlays-4bni)
 - Sorting object by value: [Nosredna on Stackoverflow](https://stackoverflow.com/a/1069840)
 - React routing with URL: [An alternative to handle state in React: the URL !](https://dev.to/gaels/an-alternative-to-handle-global-state-in-react-the-url--3753)
+- Getting window size for responsive design: [useWindowSize from useHooks](https://usehooks.com/useWindowSize/)
 
 ## Credits
 
