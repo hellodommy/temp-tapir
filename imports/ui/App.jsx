@@ -253,8 +253,8 @@ const MainPage = (props) => {
 
   const size = useWindowSize();
   const width = size["width"];
-  const calcWidth = 0.9*width;
-  const calcHeight = calcWidth / 3 * 2;
+  const calcWidth = width < 800 ? 0.9 * width : 0.6 * width;
+  const calcHeight = width < 376 ? calcWidth / 3 * 4 : calcWidth / 3 * 2;
 
   return (
     <div>

@@ -42,6 +42,7 @@ class TimeSeries extends React.Component {
     const calcWidth = this.props.dim[1];
     return (
       <Plot
+        config={{scrollZoom: true, displayModeBar: false}}
         onRelayout={this.handleResize}
         data={[
           {
@@ -103,7 +104,7 @@ class TimeSeries extends React.Component {
         ]}
         layout={{
           width: calcWidth,
-          height: calcHeight * 2,
+          height: calcHeight,
           autosize: false,
           title: "Temperature",
           yaxis: { range: [8, 28], fixedrange: true },
