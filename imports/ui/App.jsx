@@ -40,11 +40,13 @@ const MainPage = (props) => {
     : useState("05:00");
   const [endDate, setEndDate] = hasParams(location, "endDate")
     ? useState(getParams(location, "endDate"))
-    : useState("2013-10-05");
+    : useState("2013-10-02");
   const [endTime, setEndTime] = hasParams(location, "endTime")
     ? useState(ts.addColon(getParams(location, "endTime")))
     : useState("15:30");
-  const [sampleSizeScale, setSampleSizeScale] = useState(5);
+  const [sampleSizeScale, setSampleSizeScale] = hasParams(location, "sampleSizeScale")
+    ? useState(parseInt(getParams(location, "sampleSizeScale")))
+    : useState(5);
   const [isr0visible, setr0visible] = useState(true);
   const [isr1visible, setr1visible] = useState(true);
   const [isr2visible, setr2visible] = useState(true);
@@ -116,6 +118,32 @@ const MainPage = (props) => {
     }
   };
 
+  const handleDateTimeInputChange = (field, newValue) => {
+    let sdUrl = setParams("startDate", startDate);
+    let stUrl = setParams("startTime", ts.removeColon(startTime));
+    let edUrl = setParams("endDate", endDate);
+    let etUrl = setParams("endTime", ts.removeColon(endTime));
+    switch (field) {
+      case "startDate":
+        setStartDate(newValue);
+        sdUrl = setParams("startDate", newValue);
+        break;
+      case "startTime":
+        setStartTime(newValue);
+        stUrl = setParams("startTime", ts.removeColon(newValue));
+        break;
+      case "endDate":
+        setEndDate(newValue);
+        edUrl = setParams("endDate", newValue);
+        break;
+      case "endTime":
+        setEndTime(newValue);
+        etUrl = setParams("endTime", ts.removeColon(newValue));
+        break;
+    }
+    props.history.push(`?${sdUrl}&${stUrl}&${edUrl}&${etUrl}`);
+  }
+
   const dataset = ts.filterData(startDate, startTime, endDate, endTime, temps);
 
   const r0 = samp.downsample(dataset[0], sampleSizeScale);
@@ -135,136 +163,155 @@ const MainPage = (props) => {
     r5avg: samp.getAvg(r5[1]),
     r6avg: samp.getAvg(r6[1])
   }
-
-  return (
-    <div>
-      <Typography variant="h4" gutterBottom>
-        Temperature Tapir 🦡
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={6} sm={3}>
-          <form noValidate>
-            <TextField
-              id="startDate"
-              label="Start Date"
-              type="date"
-              value={startDate}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </form>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <form noValidate>
-            <TextField
-              id="startTime"
-              label="Start Time"
-              type="time"
-              value={startTime}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                step: 300, // 5 min
-              }}
-              onChange={(e) => setStartTime(e.target.value)}
-            />
-          </form>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <form noValidate>
-            <TextField
-              id="endDate"
-              label="End Date"
-              type="date"
-              value={endDate}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </form>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <form noValidate>
-            <TextField
-              id="endTime"
-              label="End Time"
-              type="time"
-              value={endTime}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                step: 300, // 5 min
-              }}
-              onChange={(e) => setEndTime(e.target.value)}
-            />
-          </form>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography variant="body2" gutterBottom>
-            Sample size
-          </Typography>
-          <Slider
-            defaultValue={sampleSizeScale}
-            aria-labelledby="discrete-slider-small-steps"
-            step={1}
-            marks
-            min={1}
-            max={9}
-            valueLabelDisplay="auto"
-            onChange={(e, v) => setSampleSizeScale(v)}
+return (
+  <div>
+    <Typography variant="h4" gutterBottom>
+      Temperature Tapir 🦡
+    </Typography>
+    <Grid container spacing={3}>
+      <Grid item xs={6} sm={3}>
+        <form noValidate>
+          <TextField
+            id="startDate"
+            label="Start Date"
+            type="date"
+            value={startDate}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={(e) =>
+              handleDateTimeInputChange("startDate", e.target.value)
+            }
           />
-          <Typography variant="body2" gutterBottom>
-            {samp.getSampleSizeString(sampleSizeScale)}
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Suspense fallback={<div style={{height: 450, width: 700}}>Loading time series...</div>}>
-            <TimeSeries
-              onTimeframeChange={handleResize}
-              r0={r0}
-              r1={r1}
-              r2={r2}
-              r3={r3}
-              r4={r4}
-              r5={r5}
-              r6={r6}
-              visibility={[
-                isr0visible,
-                isr1visible,
-                isr2visible,
-                isr3visible,
-                isr4visible,
-                isr5visible,
-                isr6visible,
-              ]}
-            />
-          </Suspense>
-        </Grid>
-        <Grid item xs={12}>
-          <Suspense fallback={<div style={{width: 1280, height: 720}}>Loading floor plan...</div>}>
-            <Floorplan
-              onRoomClick={handleRoomClick}
-              avgTemps={avgTemps}
-              visibility={[
-                isr0visible,
-                isr1visible,
-                isr2visible,
-                isr3visible,
-                isr4visible,
-                isr5visible,
-                isr6visible,
-              ]}
-            />
-          </Suspense>
-        </Grid>
+        </form>
       </Grid>
-    </div>
-  );
+      <Grid item xs={6} sm={3}>
+        <form noValidate>
+          <TextField
+            id="startTime"
+            label="Start Time"
+            type="time"
+            value={startTime}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 300, // 5 min
+            }}
+            onChange={(e) =>
+              handleDateTimeInputChange("startTime", e.target.value)
+            }
+          />
+        </form>
+      </Grid>
+      <Grid item xs={6} sm={3}>
+        <form noValidate>
+          <TextField
+            id="endDate"
+            label="End Date"
+            type="date"
+            value={endDate}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={(e) =>
+              handleDateTimeInputChange("endDate", e.target.value)
+            }
+          />
+        </form>
+      </Grid>
+      <Grid item xs={6} sm={3}>
+        <form noValidate>
+          <TextField
+            id="endTime"
+            label="End Time"
+            type="time"
+            value={endTime}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 300, // 5 min
+            }}
+            onChange={(e) =>
+              handleDateTimeInputChange("endTime", e.target.value)
+            }
+          />
+        </form>
+      </Grid>
+      <Grid item xs={6}>
+        <Typography variant="body2" gutterBottom>
+          Sample size
+        </Typography>
+        <Slider
+          defaultValue={sampleSizeScale}
+          aria-labelledby="discrete-slider-small-steps"
+          step={1}
+          marks
+          min={1}
+          max={9}
+          valueLabelDisplay="auto"
+          onChange={(e, v) => setSampleSizeScale(v)}
+        />
+        <Typography variant="body2" gutterBottom>
+          {samp.getSampleSizeString(sampleSizeScale)}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Suspense
+          fallback={
+            <div style={{ height: 450, width: 700 }}>
+              Loading time series...
+            </div>
+          }
+        >
+          <TimeSeries
+            onTimeframeChange={handleResize}
+            r0={r0}
+            r1={r1}
+            r2={r2}
+            r3={r3}
+            r4={r4}
+            r5={r5}
+            r6={r6}
+            visibility={[
+              isr0visible,
+              isr1visible,
+              isr2visible,
+              isr3visible,
+              isr4visible,
+              isr5visible,
+              isr6visible,
+            ]}
+          />
+        </Suspense>
+      </Grid>
+      <Grid item xs={12}>
+        <Suspense
+          fallback={
+            <div style={{ width: 1280, height: 720 }}>
+              Loading floor plan...
+            </div>
+          }
+        >
+          <Floorplan
+            onRoomClick={handleRoomClick}
+            avgTemps={avgTemps}
+            visibility={[
+              isr0visible,
+              isr1visible,
+              isr2visible,
+              isr3visible,
+              isr4visible,
+              isr5visible,
+              isr6visible,
+            ]}
+          />
+        </Suspense>
+      </Grid>
+    </Grid>
+  </div>
+);
 };
 
 export const App = () => {
