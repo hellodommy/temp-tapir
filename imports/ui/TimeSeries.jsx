@@ -1,6 +1,8 @@
 import React from "react";
-import Plot from "react-plotly.js";
-import * as ts from "../api/handleTimestamp";
+import Plotly from "plotly.js-basic-dist";
+import createPlotlyComponent from "react-plotly.js/factory";
+const Plot = createPlotlyComponent(Plotly);
+import * as ts from "../api/handleTimestamp"; 
 
 class TimeSeries extends React.Component {
   constructor(props) {
