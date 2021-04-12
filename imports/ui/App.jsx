@@ -10,63 +10,48 @@ import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
 import * as ts from "../api/handleTimestamp";
 import * as samp from "../api/sample";
+import * as link from "../api/linkability";
 
 const Floorplan = React.lazy(() => import("./Floorplan"));
 const TimeSeries = React.lazy(() => import("./TimeSeries"));
 
-function getParams(location, field) {
-  const searchParams = new URLSearchParams(location.search);
-  return searchParams.get(field) || "";
-}
-
-function hasParams(location, field) {
-  const searchParams = new URLSearchParams(location.search);
-  return searchParams.has(field);
-}
-
-function setParams(name, value) {
-  const searchParams = new URLSearchParams();
-  searchParams.set(name, value);
-  return searchParams.toString();
-}
-
 const MainPage = (props) => {
   const { location } = props;
-  const [startDate, setStartDate] = hasParams(location, "startDate")
-    ? useState(getParams(location, "startDate"))
+  const [startDate, setStartDate] = link.hasParams(location, "startDate")
+    ? useState(link.getParams(location, "startDate"))
     : useState("2013-10-02");
-  const [startTime, setStartTime] = hasParams(location, "startTime")
-    ? useState(ts.addColon(getParams(location, "startTime")))
+  const [startTime, setStartTime] = link.hasParams(location, "startTime")
+    ? useState(ts.addColon(link.getParams(location, "startTime")))
     : useState("05:00");
-  const [endDate, setEndDate] = hasParams(location, "endDate")
-    ? useState(getParams(location, "endDate"))
+  const [endDate, setEndDate] = link.hasParams(location, "endDate")
+    ? useState(link.getParams(location, "endDate"))
     : useState("2013-10-02");
-  const [endTime, setEndTime] = hasParams(location, "endTime")
-    ? useState(ts.addColon(getParams(location, "endTime")))
+  const [endTime, setEndTime] = link.hasParams(location, "endTime")
+    ? useState(ts.addColon(link.getParams(location, "endTime")))
     : useState("15:30");
-  const [sampleSizeScale, setSampleSizeScale] = hasParams(location, "sampleSizeScale")
-    ? useState(parseInt(getParams(location, "sampleSizeScale")))
+  const [sampleSizeScale, setSampleSizeScale] = link.hasParams(location, "sampleSizeScale")
+    ? useState(parseInt(link.getParams(location, "sampleSizeScale")))
     : useState(5);
-  const [isr0visible, setr0visible] = hasParams(location, "r0")
-    ? useState(getParams(location, "r0") === 'true' ? true : false)
+  const [isr0visible, setr0visible] = link.hasParams(location, "r0")
+    ? useState(link.getParams(location, "r0") === 'true' ? true : false)
     : useState(true);
-  const [isr1visible, setr1visible] = hasParams(location, "r1")
-    ? useState(getParams(location, "r1") === "true" ? true : false)
+  const [isr1visible, setr1visible] = link.hasParams(location, "r1")
+    ? useState(link.getParams(location, "r1") === "true" ? true : false)
     : useState(true);
-  const [isr2visible, setr2visible] = hasParams(location, "r2")
-    ? useState(getParams(location, "r2") === "true" ? true : false)
+  const [isr2visible, setr2visible] = link.hasParams(location, "r2")
+    ? useState(link.getParams(location, "r2") === "true" ? true : false)
     : useState(true);
-  const [isr3visible, setr3visible] = hasParams(location, "r3")
-    ? useState(getParams(location, "r3") === "true" ? true : false)
+  const [isr3visible, setr3visible] = link.hasParams(location, "r3")
+    ? useState(link.getParams(location, "r3") === "true" ? true : false)
     : useState(true);
-  const [isr4visible, setr4visible] = hasParams(location, "r4")
-    ? useState(getParams(location, "r4") === "true" ? true : false)
+  const [isr4visible, setr4visible] = link.hasParams(location, "r4")
+    ? useState(link.getParams(location, "r4") === "true" ? true : false)
     : useState(true);
-  const [isr5visible, setr5visible] = hasParams(location, "r5")
-    ? useState(getParams(location, "r5") === "true" ? true : false)
+  const [isr5visible, setr5visible] = link.hasParams(location, "r5")
+    ? useState(link.getParams(location, "r5") === "true" ? true : false)
     : useState(true);
-  const [isr6visible, setr6visible] = hasParams(location, "r6")
-    ? useState(getParams(location, "r6") === "true" ? true : false)
+  const [isr6visible, setr6visible] = link.hasParams(location, "r6")
+    ? useState(link.getParams(location, "r6") === "true" ? true : false)
     : useState(true);
 
   const dateRange = getDates(new Date(startDate), new Date(endDate));
@@ -96,113 +81,113 @@ const MainPage = (props) => {
      * Adjusts timeframe when user pans on graph
      */
     setStartDate(timeframe[0][0]);
-    const sdUrl = setParams("startDate", timeframe[0][0]);
+    const sdUrl = link.setParams("startDate", timeframe[0][0]);
     setStartTime(timeframe[0][1]);
-    const stUrl = setParams("startTime", ts.removeColon(timeframe[0][1]));
+    const stUrl = link.setParams("startTime", ts.removeColon(timeframe[0][1]));
     setEndDate(timeframe[1][0]);
-    const edUrl = setParams("endDate", timeframe[1][0]);
+    const edUrl = link.setParams("endDate", timeframe[1][0]);
     setEndTime(timeframe[1][1]);
-    const etUrl = setParams("endTime", ts.removeColon(timeframe[1][1]));
+    const etUrl = link.setParams("endTime", ts.removeColon(timeframe[1][1]));
 
-    const ssUrl = setParams("sampleSizeScale", sampleSizeScale);
-    const r0Url = setParams("r0", isr0visible);
-    const r1Url = setParams("r1", isr1visible);
-    const r2Url = setParams("r2", isr2visible);
-    const r3Url = setParams("r3", isr3visible);
-    const r4Url = setParams("r4", isr4visible);
-    const r5Url = setParams("r5", isr5visible);
-    const r6Url = setParams("r6", isr6visible);
+    const ssUrl = link.setParams("sampleSizeScale", sampleSizeScale);
+    const r0Url = link.setParams("r0", isr0visible);
+    const r1Url = link.setParams("r1", isr1visible);
+    const r2Url = link.setParams("r2", isr2visible);
+    const r3Url = link.setParams("r3", isr3visible);
+    const r4Url = link.setParams("r4", isr4visible);
+    const r5Url = link.setParams("r5", isr5visible);
+    const r6Url = link.setParams("r6", isr6visible);
     props.history.push(
       `?${sdUrl}&${stUrl}&${edUrl}&${etUrl}&${ssUrl}&${r0Url}&${r1Url}&${r2Url}&${r3Url}&${r4Url}&${r5Url}&${r6Url}`
     );
   };
 
   const handleRoomClick = (room) => {
-    let r0Url = setParams("r0", isr0visible);
-    let r1Url = setParams("r1", isr1visible);
-    let r2Url = setParams("r2", isr2visible);
-    let r3Url = setParams("r3", isr3visible);
-    let r4Url = setParams("r4", isr4visible);
-    let r5Url = setParams("r5", isr5visible);
-    let r6Url = setParams("r6", isr6visible);
+    let r0Url = link.setParams("r0", isr0visible);
+    let r1Url = link.setParams("r1", isr1visible);
+    let r2Url = link.setParams("r2", isr2visible);
+    let r3Url = link.setParams("r3", isr3visible);
+    let r4Url = link.setParams("r4", isr4visible);
+    let r5Url = link.setParams("r5", isr5visible);
+    let r6Url = link.setParams("r6", isr6visible);
 
     switch (room) {
       case 0:
         setr0visible(!isr0visible);
-        r0Url = setParams("r0", !isr0visible);
+        r0Url = link.setParams("r0", !isr0visible);
         break;
       case 1:
         setr1visible(!isr1visible);
-        r1Url = setParams("r1", !isr1visible);
+        r1Url = link.setParams("r1", !isr1visible);
         break;
       case 2:
         setr2visible(!isr2visible);
-        r2Url = setParams("r2", !isr2visible);
+        r2Url = link.setParams("r2", !isr2visible);
         break;
       case 3:
         setr3visible(!isr3visible);
-        r3Url = setParams("r3", !isr3visible);
+        r3Url = link.setParams("r3", !isr3visible);
         break;
       case 4:
         setr4visible(!isr4visible);
-        r4Url = setParams("r4", !isr4visible);
+        r4Url = link.setParams("r4", !isr4visible);
         break;
       case 5:
         setr5visible(!isr5visible);
-        r5Url = setParams("r5", !isr5visible);
+        r5Url = link.setParams("r5", !isr5visible);
         break;
       case 6:
         setr6visible(!isr6visible);
-        r6Url = setParams("r6", !isr6visible);
+        r6Url = link.setParams("r6", !isr6visible);
         break;
     }
 
-    const sdUrl = setParams("startDate", startDate);
-    const stUrl = setParams("startTime", ts.removeColon(startTime));
-    const edUrl = setParams("endDate", endDate);
-    const etUrl = setParams("endTime", ts.removeColon(endTime));
-    const ssUrl = setParams("sampleSizeScale", sampleSizeScale);
+    const sdUrl = link.setParams("startDate", startDate);
+    const stUrl = link.setParams("startTime", ts.removeColon(startTime));
+    const edUrl = link.setParams("endDate", endDate);
+    const etUrl = link.setParams("endTime", ts.removeColon(endTime));
+    const ssUrl = link.setParams("sampleSizeScale", sampleSizeScale);
     props.history.push(
       `?${sdUrl}&${stUrl}&${edUrl}&${etUrl}&${ssUrl}&${r0Url}&${r1Url}&${r2Url}&${r3Url}&${r4Url}&${r5Url}&${r6Url}`
     );
   };
 
   const handleDateTimeInputChange = (field, newValue) => {
-    let sdUrl = setParams("startDate", startDate);
-    let stUrl = setParams("startTime", ts.removeColon(startTime));
-    let edUrl = setParams("endDate", endDate);
-    let etUrl = setParams("endTime", ts.removeColon(endTime));
-    let ssUrl = setParams("sampleSizeScale", sampleSizeScale);
+    let sdUrl = link.setParams("startDate", startDate);
+    let stUrl = link.setParams("startTime", ts.removeColon(startTime));
+    let edUrl = link.setParams("endDate", endDate);
+    let etUrl = link.setParams("endTime", ts.removeColon(endTime));
+    let ssUrl = link.setParams("sampleSizeScale", sampleSizeScale);
     switch (field) {
       case "startDate":
         setStartDate(newValue);
-        sdUrl = setParams("startDate", newValue);
+        sdUrl = link.setParams("startDate", newValue);
         break;
       case "startTime":
         setStartTime(newValue);
-        stUrl = setParams("startTime", ts.removeColon(newValue));
+        stUrl = link.setParams("startTime", ts.removeColon(newValue));
         break;
       case "endDate":
         setEndDate(newValue);
-        edUrl = setParams("endDate", newValue);
+        edUrl = link.setParams("endDate", newValue);
         break;
       case "endTime":
         setEndTime(newValue);
-        etUrl = setParams("endTime", ts.removeColon(newValue));
+        etUrl = link.setParams("endTime", ts.removeColon(newValue));
         break;
       case "sampleSizeScale":
         setSampleSizeScale(newValue);
-        ssUrl = setParams("sampleSizeScale", newValue);
+        ssUrl = link.setParams("sampleSizeScale", newValue);
         break;
     }
 
-    const r0Url = setParams("r0", isr0visible);
-    const r1Url = setParams("r1", isr1visible);
-    const r2Url = setParams("r2", isr2visible);
-    const r3Url = setParams("r3", isr3visible);
-    const r4Url = setParams("r4", isr4visible);
-    const r5Url = setParams("r5", isr5visible);
-    const r6Url = setParams("r6", isr6visible);
+    const r0Url = link.setParams("r0", isr0visible);
+    const r1Url = link.setParams("r1", isr1visible);
+    const r2Url = link.setParams("r2", isr2visible);
+    const r3Url = link.setParams("r3", isr3visible);
+    const r4Url = link.setParams("r4", isr4visible);
+    const r5Url = link.setParams("r5", isr5visible);
+    const r6Url = link.setParams("r6", isr6visible);
 
     props.history.push(
       `?${sdUrl}&${stUrl}&${edUrl}&${etUrl}&${ssUrl}&${r0Url}&${r1Url}&${r2Url}&${r3Url}&${r4Url}&${r5Url}&${r6Url}`
