@@ -76,111 +76,15 @@ const MainPage = (props) => {
     return { temps };
   });
 
-  const handleResize = (timeframe) => {
+  const getStates = () => {
     /**
-     * Adjusts timeframe when user pans on graph
+     * Retrieve all states with link parameters set
      */
-    setStartDate(timeframe[0][0]);
-    const sdUrl = link.setParams("startDate", timeframe[0][0]);
-    setStartTime(timeframe[0][1]);
-    const stUrl = link.setParams("startTime", ts.removeColon(timeframe[0][1]));
-    setEndDate(timeframe[1][0]);
-    const edUrl = link.setParams("endDate", timeframe[1][0]);
-    setEndTime(timeframe[1][1]);
-    const etUrl = link.setParams("endTime", ts.removeColon(timeframe[1][1]));
-
-    const ssUrl = link.setParams("sampleSizeScale", sampleSizeScale);
-    const r0Url = link.setParams("r0", isr0visible);
-    const r1Url = link.setParams("r1", isr1visible);
-    const r2Url = link.setParams("r2", isr2visible);
-    const r3Url = link.setParams("r3", isr3visible);
-    const r4Url = link.setParams("r4", isr4visible);
-    const r5Url = link.setParams("r5", isr5visible);
-    const r6Url = link.setParams("r6", isr6visible);
-    props.history.push(
-      `?${sdUrl}&${stUrl}&${edUrl}&${etUrl}&${ssUrl}&${r0Url}&${r1Url}&${r2Url}&${r3Url}&${r4Url}&${r5Url}&${r6Url}`
-    );
-  };
-
-  const handleRoomClick = (room) => {
-    let r0Url = link.setParams("r0", isr0visible);
-    let r1Url = link.setParams("r1", isr1visible);
-    let r2Url = link.setParams("r2", isr2visible);
-    let r3Url = link.setParams("r3", isr3visible);
-    let r4Url = link.setParams("r4", isr4visible);
-    let r5Url = link.setParams("r5", isr5visible);
-    let r6Url = link.setParams("r6", isr6visible);
-
-    switch (room) {
-      case 0:
-        setr0visible(!isr0visible);
-        r0Url = link.setParams("r0", !isr0visible);
-        break;
-      case 1:
-        setr1visible(!isr1visible);
-        r1Url = link.setParams("r1", !isr1visible);
-        break;
-      case 2:
-        setr2visible(!isr2visible);
-        r2Url = link.setParams("r2", !isr2visible);
-        break;
-      case 3:
-        setr3visible(!isr3visible);
-        r3Url = link.setParams("r3", !isr3visible);
-        break;
-      case 4:
-        setr4visible(!isr4visible);
-        r4Url = link.setParams("r4", !isr4visible);
-        break;
-      case 5:
-        setr5visible(!isr5visible);
-        r5Url = link.setParams("r5", !isr5visible);
-        break;
-      case 6:
-        setr6visible(!isr6visible);
-        r6Url = link.setParams("r6", !isr6visible);
-        break;
-    }
-
     const sdUrl = link.setParams("startDate", startDate);
     const stUrl = link.setParams("startTime", ts.removeColon(startTime));
     const edUrl = link.setParams("endDate", endDate);
     const etUrl = link.setParams("endTime", ts.removeColon(endTime));
     const ssUrl = link.setParams("sampleSizeScale", sampleSizeScale);
-    props.history.push(
-      `?${sdUrl}&${stUrl}&${edUrl}&${etUrl}&${ssUrl}&${r0Url}&${r1Url}&${r2Url}&${r3Url}&${r4Url}&${r5Url}&${r6Url}`
-    );
-  };
-
-  const handleDateTimeInputChange = (field, newValue) => {
-    let sdUrl = link.setParams("startDate", startDate);
-    let stUrl = link.setParams("startTime", ts.removeColon(startTime));
-    let edUrl = link.setParams("endDate", endDate);
-    let etUrl = link.setParams("endTime", ts.removeColon(endTime));
-    let ssUrl = link.setParams("sampleSizeScale", sampleSizeScale);
-    switch (field) {
-      case "startDate":
-        setStartDate(newValue);
-        sdUrl = link.setParams("startDate", newValue);
-        break;
-      case "startTime":
-        setStartTime(newValue);
-        stUrl = link.setParams("startTime", ts.removeColon(newValue));
-        break;
-      case "endDate":
-        setEndDate(newValue);
-        edUrl = link.setParams("endDate", newValue);
-        break;
-      case "endTime":
-        setEndTime(newValue);
-        etUrl = link.setParams("endTime", ts.removeColon(newValue));
-        break;
-      case "sampleSizeScale":
-        setSampleSizeScale(newValue);
-        ssUrl = link.setParams("sampleSizeScale", newValue);
-        break;
-    }
-
     const r0Url = link.setParams("r0", isr0visible);
     const r1Url = link.setParams("r1", isr1visible);
     const r2Url = link.setParams("r2", isr2visible);
@@ -188,10 +92,117 @@ const MainPage = (props) => {
     const r4Url = link.setParams("r4", isr4visible);
     const r5Url = link.setParams("r5", isr5visible);
     const r6Url = link.setParams("r6", isr6visible);
+    return {
+      startDate: sdUrl,
+      startTime: stUrl,
+      endDate: edUrl,
+      endTime: etUrl,
+      sampleSizeScale: ssUrl,
+      r0: r0Url,
+      r1: r1Url,
+      r2: r2Url,
+      r3: r3Url,
+      r4: r4Url,
+      r5: r5Url,
+      r6: r6Url,
+    };
+  };
 
+  const setUrl = (states) => {
+    /**
+     * Sets URL based on the given states
+     */
     props.history.push(
-      `?${sdUrl}&${stUrl}&${edUrl}&${etUrl}&${ssUrl}&${r0Url}&${r1Url}&${r2Url}&${r3Url}&${r4Url}&${r5Url}&${r6Url}`
+      `?${states["startDate"]}&${states["startTime"]}&${states["endDate"]}&${states["endTime"]}&${states["sampleSizeScale"]}&${states["r0"]}&${states["r1"]}&${states["r2"]}&${states["r3"]}&${states["r4"]}&${states["r5"]}&${states["r6"]}`
     );
+  };
+
+  const handleResize = (timeframe) => {
+    /**
+     * Adjusts timeframe when user pans on graph
+     */
+    let states = getStates();
+    setStartDate(timeframe[0][0]);
+    states["startDate"] = link.setParams("startDate", timeframe[0][0]);
+    setStartTime(timeframe[0][1]);
+    states["startTime"] = link.setParams("startTime", ts.removeColon(timeframe[0][1]));
+    setEndDate(timeframe[1][0]);
+    states["endDate"] = link.setParams("endDate", timeframe[1][0]);
+    setEndTime(timeframe[1][1]);
+    states["endTime"] = link.setParams("endTime", ts.removeColon(timeframe[1][1]));
+
+    setUrl(states);
+  };
+
+  const handleRoomClick = (room) => {
+    /**
+     * Toggles room visbility based on which room was clicked
+     */
+    let states = getStates();
+
+    switch (room) {
+      case 0:
+        setr0visible(!isr0visible);
+        states["r0"] = link.setParams("r0", !isr0visible);
+        break;
+      case 1:
+        setr1visible(!isr1visible);
+        states["r1"] = link.setParams("r1", !isr1visible);
+        break;
+      case 2:
+        setr2visible(!isr2visible);
+        states["r2"] = link.setParams("r2", !isr2visible);
+        break;
+      case 3:
+        setr3visible(!isr3visible);
+        states["r3"] = link.setParams("r3", !isr3visible);
+        break;
+      case 4:
+        setr4visible(!isr4visible);
+        states["r4"] = link.setParams("r4", !isr4visible);
+        break;
+      case 5:
+        setr5visible(!isr5visible);
+        states["r5"] = link.setParams("r5", !isr5visible);
+        break;
+      case 6:
+        setr6visible(!isr6visible);
+        states["r6"] = link.setParams("r6", !isr6visible);
+        break;
+    }
+
+    setUrl(states);
+  };
+
+  const handleInputChange = (field, newValue) => {
+    /**
+     * Sets state based on user input for timeframe and sample size
+     */
+    let states = getStates();
+    switch (field) {
+      case "startDate":
+        setStartDate(newValue);
+        states["startDate"] = link.setParams("startDate", newValue);
+        break;
+      case "startTime":
+        setStartTime(newValue);
+        states["startTime"] = link.setParams("startTime", ts.removeColon(newValue));
+        break;
+      case "endDate":
+        setEndDate(newValue);
+        states["endDate"] = link.setParams("endDate", newValue);
+        break;
+      case "endTime":
+        setEndTime(newValue);
+        states["endTime"] = link.setParams("endTime", ts.removeColon(newValue));
+        break;
+      case "sampleSizeScale":
+        setSampleSizeScale(newValue);
+        states["sampleSizeScale"] = link.setParams("sampleSizeScale", newValue);
+        break;
+    }
+
+    setUrl(states);
   }
 
   const dataset = ts.filterData(startDate, startTime, endDate, endTime, temps);
@@ -230,7 +241,7 @@ return (
               shrink: true,
             }}
             onChange={(e) =>
-              handleDateTimeInputChange("startDate", e.target.value)
+              handleInputChange("startDate", e.target.value)
             }
           />
         </form>
@@ -249,7 +260,7 @@ return (
               step: 300, // 5 min
             }}
             onChange={(e) =>
-              handleDateTimeInputChange("startTime", e.target.value)
+              handleInputChange("startTime", e.target.value)
             }
           />
         </form>
@@ -265,7 +276,7 @@ return (
               shrink: true,
             }}
             onChange={(e) =>
-              handleDateTimeInputChange("endDate", e.target.value)
+              handleInputChange("endDate", e.target.value)
             }
           />
         </form>
@@ -284,7 +295,7 @@ return (
               step: 300, // 5 min
             }}
             onChange={(e) =>
-              handleDateTimeInputChange("endTime", e.target.value)
+              handleInputChange("endTime", e.target.value)
             }
           />
         </form>
@@ -301,7 +312,7 @@ return (
           min={1}
           max={9}
           valueLabelDisplay="auto"
-          onChange={(e, v) => handleDateTimeInputChange("sampleSizeScale", v)}
+          onChange={(e, v) => handleInputChange("sampleSizeScale", v)}
         />
         <Typography variant="body2" gutterBottom>
           {samp.getSampleSizeString(sampleSizeScale)}
