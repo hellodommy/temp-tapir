@@ -6,6 +6,8 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 import { TempCollection } from '../db/TempCollection';
 import getDates from "../api/getDates";
 import * as ts from "../api/handleTimestamp";
@@ -258,10 +260,14 @@ const MainPage = (props) => {
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
-        Temperature Tapir 🦡
-      </Typography>
-      <Grid container spacing={3}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6">
+            Temperature Dashboard
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Grid container justify="center" style={{ paddingLeft: "1rem", paddingRight: "1rem", marginTop: "1rem"}}>
         <Grid item xs={6} sm={3}>
           <form noValidate>
             <TextField
@@ -324,7 +330,7 @@ const MainPage = (props) => {
             />
           </form>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={6} style={{marginTop: "1rem"}}>
           <Typography variant="body2" gutterBottom>
             Sample size
           </Typography>
