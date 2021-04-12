@@ -47,13 +47,27 @@ const MainPage = (props) => {
   const [sampleSizeScale, setSampleSizeScale] = hasParams(location, "sampleSizeScale")
     ? useState(parseInt(getParams(location, "sampleSizeScale")))
     : useState(5);
-  const [isr0visible, setr0visible] = useState(true);
-  const [isr1visible, setr1visible] = useState(true);
-  const [isr2visible, setr2visible] = useState(true);
-  const [isr3visible, setr3visible] = useState(true);
-  const [isr4visible, setr4visible] = useState(true);
-  const [isr5visible, setr5visible] = useState(true);
-  const [isr6visible, setr6visible] = useState(true);
+  const [isr0visible, setr0visible] = hasParams(location, "r0")
+    ? useState(getParams(location, "r0") === 'true' ? true : false)
+    : useState(true);
+  const [isr1visible, setr1visible] = hasParams(location, "r1")
+    ? useState(getParams(location, "r1") === "true" ? true : false)
+    : useState(true);
+  const [isr2visible, setr2visible] = hasParams(location, "r2")
+    ? useState(getParams(location, "r2") === "true" ? true : false)
+    : useState(true);
+  const [isr3visible, setr3visible] = hasParams(location, "r3")
+    ? useState(getParams(location, "r3") === "true" ? true : false)
+    : useState(true);
+  const [isr4visible, setr4visible] = hasParams(location, "r4")
+    ? useState(getParams(location, "r4") === "true" ? true : false)
+    : useState(true);
+  const [isr5visible, setr5visible] = hasParams(location, "r5")
+    ? useState(getParams(location, "r5") === "true" ? true : false)
+    : useState(true);
+  const [isr6visible, setr6visible] = hasParams(location, "r6")
+    ? useState(getParams(location, "r6") === "true" ? true : false)
+    : useState(true);
 
   const dateRange = getDates(new Date(startDate), new Date(endDate));
   
@@ -89,33 +103,68 @@ const MainPage = (props) => {
     const edUrl = setParams("endDate", timeframe[1][0]);
     setEndTime(timeframe[1][1]);
     const etUrl = setParams("endTime", ts.removeColon(timeframe[1][1]));
-    props.history.push(`?${sdUrl}&${stUrl}&${edUrl}&${etUrl}`);
+
+    const ssUrl = setParams("sampleSizeScale", sampleSizeScale);
+    const r0Url = setParams("r0", isr0visible);
+    const r1Url = setParams("r1", isr1visible);
+    const r2Url = setParams("r2", isr2visible);
+    const r3Url = setParams("r3", isr3visible);
+    const r4Url = setParams("r4", isr4visible);
+    const r5Url = setParams("r5", isr5visible);
+    const r6Url = setParams("r6", isr6visible);
+    props.history.push(
+      `?${sdUrl}&${stUrl}&${edUrl}&${etUrl}&${ssUrl}&${r0Url}&${r1Url}&${r2Url}&${r3Url}&${r4Url}&${r5Url}&${r6Url}`
+    );
   };
 
   const handleRoomClick = (room) => {
+    let r0Url = setParams("r0", isr0visible);
+    let r1Url = setParams("r1", isr1visible);
+    let r2Url = setParams("r2", isr2visible);
+    let r3Url = setParams("r3", isr3visible);
+    let r4Url = setParams("r4", isr4visible);
+    let r5Url = setParams("r5", isr5visible);
+    let r6Url = setParams("r6", isr6visible);
+
     switch (room) {
       case 0:
         setr0visible(!isr0visible);
+        r0Url = setParams("r0", !isr0visible);
         break;
       case 1:
         setr1visible(!isr1visible);
+        r1Url = setParams("r1", !isr1visible);
         break;
       case 2:
         setr2visible(!isr2visible);
+        r2Url = setParams("r2", !isr2visible);
         break;
       case 3:
         setr3visible(!isr3visible);
+        r3Url = setParams("r3", !isr3visible);
         break;
       case 4:
         setr4visible(!isr4visible);
+        r4Url = setParams("r4", !isr4visible);
         break;
       case 5:
         setr5visible(!isr5visible);
+        r5Url = setParams("r5", !isr5visible);
         break;
       case 6:
         setr6visible(!isr6visible);
+        r6Url = setParams("r6", !isr6visible);
         break;
     }
+
+    const sdUrl = setParams("startDate", startDate);
+    const stUrl = setParams("startTime", ts.removeColon(startTime));
+    const edUrl = setParams("endDate", endDate);
+    const etUrl = setParams("endTime", ts.removeColon(endTime));
+    const ssUrl = setParams("sampleSizeScale", sampleSizeScale);
+    props.history.push(
+      `?${sdUrl}&${stUrl}&${edUrl}&${etUrl}&${ssUrl}&${r0Url}&${r1Url}&${r2Url}&${r3Url}&${r4Url}&${r5Url}&${r6Url}`
+    );
   };
 
   const handleDateTimeInputChange = (field, newValue) => {
@@ -123,6 +172,7 @@ const MainPage = (props) => {
     let stUrl = setParams("startTime", ts.removeColon(startTime));
     let edUrl = setParams("endDate", endDate);
     let etUrl = setParams("endTime", ts.removeColon(endTime));
+    let ssUrl = setParams("sampleSizeScale", sampleSizeScale);
     switch (field) {
       case "startDate":
         setStartDate(newValue);
@@ -140,8 +190,23 @@ const MainPage = (props) => {
         setEndTime(newValue);
         etUrl = setParams("endTime", ts.removeColon(newValue));
         break;
+      case "sampleSizeScale":
+        setSampleSizeScale(newValue);
+        ssUrl = setParams("sampleSizeScale", newValue);
+        break;
     }
-    props.history.push(`?${sdUrl}&${stUrl}&${edUrl}&${etUrl}`);
+
+    const r0Url = setParams("r0", isr0visible);
+    const r1Url = setParams("r1", isr1visible);
+    const r2Url = setParams("r2", isr2visible);
+    const r3Url = setParams("r3", isr3visible);
+    const r4Url = setParams("r4", isr4visible);
+    const r5Url = setParams("r5", isr5visible);
+    const r6Url = setParams("r6", isr6visible);
+
+    props.history.push(
+      `?${sdUrl}&${stUrl}&${edUrl}&${etUrl}&${ssUrl}&${r0Url}&${r1Url}&${r2Url}&${r3Url}&${r4Url}&${r5Url}&${r6Url}`
+    );
   }
 
   const dataset = ts.filterData(startDate, startTime, endDate, endTime, temps);
@@ -251,7 +316,7 @@ return (
           min={1}
           max={9}
           valueLabelDisplay="auto"
-          onChange={(e, v) => setSampleSizeScale(v)}
+          onChange={(e, v) => handleDateTimeInputChange("sampleSizeScale", v)}
         />
         <Typography variant="body2" gutterBottom>
           {samp.getSampleSizeString(sampleSizeScale)}
