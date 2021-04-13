@@ -262,78 +262,95 @@ const MainPage = (props) => {
     <div>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6">
-            Temperature Dashboard
-          </Typography>
+          <Typography variant="h6">Temperature Dashboard</Typography>
         </Toolbar>
       </AppBar>
-      <Grid container justify="center" style={{ paddingLeft: "1rem", paddingRight: "1rem", marginTop: "1rem"}}>
-        <Grid item xs={6} sm={3}>
-          <form noValidate>
-            <TextField
-              id="startDate"
-              label="Start Date"
-              type="date"
-              value={startDate}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={(e) => handleInputChange("startDate", e.target.value)}
-            />
-          </form>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <form noValidate>
-            <TextField
-              id="startTime"
-              label="Start Time"
-              type="time"
-              value={startTime}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                step: 300, // 5 min
-              }}
-              onChange={(e) => handleInputChange("startTime", e.target.value)}
-            />
-          </form>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <form noValidate>
-            <TextField
-              id="endDate"
-              label="End Date"
-              type="date"
-              value={endDate}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={(e) => handleInputChange("endDate", e.target.value)}
-            />
-          </form>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <form noValidate>
-            <TextField
-              id="endTime"
-              label="End Time"
-              type="time"
-              value={endTime}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                step: 300, // 5 min
-              }}
-              onChange={(e) => handleInputChange("endTime", e.target.value)}
-            />
-          </form>
-        </Grid>
-        <Grid item xs={6} style={{marginTop: "1rem"}}>
-          <Typography variant="body2" gutterBottom>
-            Sample size
-          </Typography>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "1rem",
+            paddingLeft: "1rem",
+            paddingRight: "1rem",
+          }}
+        >
+          <div style={{ marginTop: "0.5rem" }}>
+            <form noValidate>
+              <TextField
+                id="startDate"
+                label="Start Date"
+                type="date"
+                value={startDate}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={(e) => handleInputChange("startDate", e.target.value)}
+              />
+            </form>
+          </div>
+          <div style={{ marginTop: "0.5rem" }}>
+            <form noValidate>
+              <TextField
+                id="startTime"
+                label="Start Time"
+                type="time"
+                value={startTime}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  step: 300, // 5 min
+                }}
+                onChange={(e) => handleInputChange("startTime", e.target.value)}
+              />
+            </form>
+          </div>
+          <div style={{ marginTop: "0.5rem" }}>
+            <form noValidate>
+              <TextField
+                id="endDate"
+                label="End Date"
+                type="date"
+                value={endDate}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={(e) => handleInputChange("endDate", e.target.value)}
+              />
+            </form>
+          </div>
+          <div style={{ marginTop: "0.5rem" }}>
+            <form noValidate>
+              <TextField
+                id="endTime"
+                label="End Time"
+                type="time"
+                value={endTime}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  step: 300, // 5 min
+                }}
+                onChange={(e) => handleInputChange("endTime", e.target.value)}
+              />
+            </form>
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            marginTop: "1rem",
+            alignItems: "center",
+          }}
+        >
           <Slider
             defaultValue={sampleSizeScale}
             aria-labelledby="discrete-slider-small-steps"
@@ -343,12 +360,15 @@ const MainPage = (props) => {
             max={9}
             valueLabelDisplay="auto"
             onChange={(e, v) => handleInputChange("sampleSizeScale", v)}
+            style={{ maxWidth: "30%" }}
           />
-          <Typography variant="body2" gutterBottom>
+          <Typography variant="caption" gutterBottom>
             {samp.getSampleSizeString(sampleSizeScale)}
           </Typography>
-        </Grid>
-        <Grid item xs={12}>
+        </div>
+      </div>
+      <div style={{ marginTop: "0.5rem", marginBottom: "2rem" }}>
+        <center>
           <Suspense
             fallback={
               <div style={{ height: calcHeight, width: calcWidth }}>
@@ -377,8 +397,10 @@ const MainPage = (props) => {
               dim={[calcHeight, calcWidth]}
             />
           </Suspense>
-        </Grid>
-        <Grid item xs={12}>
+        </center>
+      </div>
+      <div>
+        <center>
           <Suspense
             fallback={
               <div style={{ width: calcWidth, height: calcHeight }}>
@@ -401,8 +423,8 @@ const MainPage = (props) => {
               dim={[calcHeight, calcWidth]}
             />
           </Suspense>
-        </Grid>
-      </Grid>
+        </center>
+      </div>
     </div>
   );
 };
