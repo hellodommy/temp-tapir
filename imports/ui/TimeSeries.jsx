@@ -2,7 +2,7 @@ import React from "react";
 import Plotly from "plotly.js-basic-dist";
 import createPlotlyComponent from "react-plotly.js/factory";
 const Plot = createPlotlyComponent(Plotly);
-import * as ts from "../api/handleTimestamp"; 
+import * as ts from "../api/handleTimeframe"; 
 
 class TimeSeries extends React.Component {
   constructor(props) {
@@ -108,7 +108,8 @@ class TimeSeries extends React.Component {
           width: calcWidth,
           height: calcHeight,
           autosize: false,
-          yaxis: { range: [8, 28], fixedrange: true },
+          yaxis: { fixedrange: true },
+          legend: { orientation: "h", y: "-0.25"}
         }}
       />
     );

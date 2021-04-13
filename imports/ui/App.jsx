@@ -4,13 +4,11 @@ import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import { TempCollection } from '../db/TempCollection';
-import getDates from "../api/getDates";
-import * as ts from "../api/handleTimestamp";
+import * as ts from "../api/handleTimeframe";
 import * as samp from "../api/sample";
 import * as link from "../api/linkability";
 
@@ -18,28 +16,21 @@ const Floorplan = React.lazy(() => import("./Floorplan"));
 const TimeSeries = React.lazy(() => import("./TimeSeries"));
 
 function useWindowSize() {
-  // Initialize state with undefined width/height so server and client renders match
-  // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
   const [windowSize, setWindowSize] = useState({
     width: undefined,
     height: undefined,
   });
   useEffect(() => {
-    // Handler to call on window resize
     function handleResize() {
-      // Set window width/height to state
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
     }
-    // Add event listener
     window.addEventListener("resize", handleResize);
-    // Call handler right away so state gets updated with initial window size
     handleResize();
-    // Remove event listener on cleanup
     return () => window.removeEventListener("resize", handleResize);
-  }, []); // Empty array ensures that effect is only run on mount
+  }, []);
   return windowSize;
 }
 
@@ -82,7 +73,7 @@ const MainPage = (props) => {
     ? useState(link.getParams(location, "r6") === "true" ? true : false)
     : useState(true);
 
-  const dateRange = getDates(new Date(startDate), new Date(endDate));
+  const dateRange = ts.getDates(new Date(startDate), new Date(endDate));
   
   const { temps, isLoading } = useTracker(() => {
     /**
