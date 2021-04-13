@@ -278,11 +278,16 @@ const MainPage = (props) => {
             paddingRight: "1rem",
           }}
         >
-          <div style={{ marginTop: "0.5rem" }}>
+          <div style={{ marginTop: "0.5rem", marginRight: "0.5rem" }}>
+            <Typography variant="caption">Start</Typography>
+          </div>
+          <div style={{ marginTop: "0.5rem", marginRight: "0.5rem" }}>
             <form noValidate>
               <TextField
-                id="startDate"
+                variant="outlined"
+                size="small"
                 label="Start Date"
+                id="startDate"
                 type="date"
                 value={startDate}
                 InputLabelProps={{
@@ -292,11 +297,13 @@ const MainPage = (props) => {
               />
             </form>
           </div>
-          <div style={{ marginTop: "0.5rem" }}>
+          <div style={{ marginTop: "0.5rem", marginRight: "0.5rem" }}>
             <form noValidate>
               <TextField
-                id="startTime"
+                variant="outlined"
+                size="small"
                 label="Start Time"
+                id="startTime"
                 type="time"
                 value={startTime}
                 InputLabelProps={{
@@ -309,11 +316,17 @@ const MainPage = (props) => {
               />
             </form>
           </div>
-          <div style={{ marginTop: "0.5rem" }}>
+          <div style={{ width: "0.5rem" }}></div>
+          <div style={{ marginTop: "0.5rem", marginRight: "0.5rem" }}>
+            <Typography variant="caption">End</Typography>
+          </div>
+          <div style={{ marginTop: "0.5rem", marginRight: "0.5rem" }}>
             <form noValidate>
               <TextField
-                id="endDate"
+                variant="outlined"
+                size="small"
                 label="End Date"
+                id="endDate"
                 type="date"
                 value={endDate}
                 InputLabelProps={{
@@ -326,8 +339,10 @@ const MainPage = (props) => {
           <div style={{ marginTop: "0.5rem" }}>
             <form noValidate>
               <TextField
+                variant="outlined"
+                size="small"
+                label="End Date"
                 id="endTime"
-                label="End Time"
                 type="time"
                 value={endTime}
                 InputLabelProps={{
@@ -347,7 +362,7 @@ const MainPage = (props) => {
             flexDirection: "row",
             flexWrap: "wrap",
             justifyContent: "center",
-            marginTop: "1rem",
+            marginTop: "2rem",
             alignItems: "center",
           }}
         >
@@ -360,7 +375,7 @@ const MainPage = (props) => {
             max={9}
             valueLabelDisplay="auto"
             onChange={(e, v) => handleInputChange("sampleSizeScale", v)}
-            style={{ maxWidth: "30%" }}
+            style={{ maxWidth: "30%", marginRight: "0.5rem" }}
           />
           <Typography variant="caption" gutterBottom>
             {samp.getSampleSizeString(sampleSizeScale)}
