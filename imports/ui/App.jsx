@@ -405,7 +405,7 @@ const MainPage = (props) => {
           </Suspense>
         </center>
       </div>
-      <div>
+      <div style={{ marginTop: "5rem" }}>
         <center>
           <Suspense
             fallback={
