@@ -109,7 +109,8 @@ class TimeSeries extends React.Component {
           height: calcHeight,
           autosize: false,
           yaxis: { fixedrange: true },
-          legend: { orientation: "h", y: "-0.25"}
+          legend: { orientation: "h", y: "-0.25"},
+          hovermode: false,
         }}
       />
     );
